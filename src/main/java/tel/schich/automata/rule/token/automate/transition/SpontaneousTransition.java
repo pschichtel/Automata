@@ -23,10 +23,11 @@
 package tel.schich.automata.rule.token.automate.transition;
 
 import tel.schich.automata.rule.token.automate.State;
-import tel.schich.automata.rule.token.Epsilon;
 
 public class SpontaneousTransition extends Transition
 {
+    public static final String EPSILON = "ε";
+
     public SpontaneousTransition(State origin, State destination)
     {
         super(origin, destination);
@@ -35,6 +36,6 @@ public class SpontaneousTransition extends Transition
     @Override
     public String getLabel()
     {
-        return Epsilon.EPSILON.getName();
+        return EPSILON;
     }
 }
