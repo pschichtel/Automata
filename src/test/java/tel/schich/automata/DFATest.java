@@ -20,7 +20,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package tel.schich.automata.rule.token.automate;
+package tel.schich.automata;
 
 import tel.schich.automata.DFA;
 import tel.schich.automata.FiniteAutomate;

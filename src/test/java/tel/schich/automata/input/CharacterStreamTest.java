@@ -20,7 +20,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package tel.schich.automata.rule.token;
+package tel.schich.automata.input;
 
 import tel.schich.automata.input.CharacterStream;
 import tel.schich.automata.input.source.CharSequenceSource;
