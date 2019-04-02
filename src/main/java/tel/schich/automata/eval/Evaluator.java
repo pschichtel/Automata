@@ -41,7 +41,7 @@ public class Evaluator
         {
             return evaluatorFor(automates[0]);
         }
-        final Set<StateMachineEvaluator> evaluators = new HashSet<StateMachineEvaluator>();
+        final Set<StateMachineEvaluator> evaluators = new HashSet<>();
         for (final FiniteAutomate<? extends Transition> automate : automates)
         {
             evaluators.add(evaluatorFor(automate));

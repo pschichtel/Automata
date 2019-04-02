@@ -26,6 +26,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.function.Function;
+
 import tel.schich.automata.util.OrderedPair;
 import tel.schich.automata.util.UnorderedPair;
 
@@ -38,7 +40,7 @@ public abstract class Util
 
     public static <T> Set<T> asSet(T... elements)
     {
-        return new HashSet<T>(Arrays.asList(elements));
+        return new HashSet<>(Arrays.asList(elements));
     }
 
     public static <L, R> Set<OrderedPair<L, R>> orderedMultiply(Set<L> left, Set<R> right)
@@ -81,5 +83,26 @@ public abstract class Util
         }
 
         return array;
+    }
+
+    public static <T> Set<T> fixPointIterate(Set<T> in, Function<T, Set<T>> func)
+    {
+        Set<T> result = new HashSet<T>(in);
+        Set<T> newElements = new HashSet<T>(in);
+
+        while (true)
+        {
+            Set<T> temp = new HashSet<T>();
+            for (T element : newElements)
+            {
+                temp.addAll(func.apply(element));
+            }
+            newElements = temp;
+            if (result.containsAll(newElements))
+            {
+                return result;
+            }
+            result.addAll(newElements);
+        }
     }
 }

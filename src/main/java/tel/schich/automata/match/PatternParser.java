@@ -54,7 +54,7 @@ public abstract class PatternParser
 
     private static NFA readExpression(CharacterStream stream, int depth)
     {
-        LinkedList<FiniteAutomate<? extends Transition>> elements = new LinkedList<FiniteAutomate<? extends Transition>>();
+        LinkedList<FiniteAutomate<? extends Transition>> elements = new LinkedList<>();
 
         for (final char c : stream)
         {
@@ -114,7 +114,7 @@ public abstract class PatternParser
         return automate;
     }
 
-    public static NFA readQuantifier(CharacterStream s, FiniteAutomate<? extends Transition> automate)
+    private static NFA readQuantifier(CharacterStream s, FiniteAutomate<? extends Transition> automate)
     {
         switch (s.current())
         {
@@ -270,7 +270,7 @@ public abstract class PatternParser
             case 'd':
                 return matchOne('0', '1', '2', '3', '4', '5', '6', '7', '8', '9');
             case 'w':
-                List<Character> chars = new ArrayList<Character>();
+                List<Character> chars = new ArrayList<>();
                 for (int i = 'a'; i <= 'z'; ++i)
                 {
                     chars.add((char)i);
@@ -304,7 +304,7 @@ public abstract class PatternParser
 
     private static DFA readQuoted(CharacterStream s)
     {
-        LinkedList<FiniteAutomate<? extends Transition>> elems = new LinkedList<FiniteAutomate<? extends Transition>>();
+        LinkedList<FiniteAutomate<? extends Transition>> elems = new LinkedList<>();
         final CharBuffer.Checkpoint checkpoint = s.checkpoint();
         for (final Character c : s)
         {

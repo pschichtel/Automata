@@ -35,8 +35,6 @@ import tel.schich.automata.transition.ExpectedTransition;
 import tel.schich.automata.transition.SpontaneousTransition;
 import tel.schich.automata.transition.Transition;
 import tel.schich.automata.transition.WildcardTransition;
-import tel.schich.automata.util.FixPoint;
-import tel.schich.automata.util.Function;
 import tel.schich.automata.util.OrderedPair;
 import tel.schich.automata.util.Pair;
 import tel.schich.automata.util.Util;
@@ -52,8 +50,8 @@ public class NFA extends FiniteAutomate<Transition>
     {
         State a = new State();
         State b = new State();
-        EPSILON = new NFA(Util.asSet(a, b), Util.<Transition>asSet(new SpontaneousTransition(a, b)), a, Util.asSet(b));
-        EMPTY = new NFA(Util.asSet(a, b), Collections.<Transition>emptySet(), a, Util.asSet(b));
+        EPSILON = new NFA(Util.asSet(a, b), Util.asSet(new SpontaneousTransition(a, b)), a, Util.asSet(b));
+        EMPTY = new NFA(Util.asSet(a, b), Collections.emptySet(), a, Util.asSet(b));
     }
 
     public Set<State> getStartStates()
@@ -113,24 +111,19 @@ public class NFA extends FiniteAutomate<Transition>
 
     public Set<State> epsilonClosure(Set<State> states)
     {
-        return FixPoint.apply(states, new Function<State, Set<State>>()
-        {
-            @Override
-            public Set<State> apply(State in)
+        return Util.fixPointIterate(states, in -> {
+            Set<State> newStates = new HashSet<>();
+            for (SpontaneousTransition transition : getSpontaneousTransitionsFor(in))
             {
-                Set<State> states = new HashSet<State>();
-                for (SpontaneousTransition transition : getSpontaneousTransitionsFor(in))
-                {
-                    states.add(transition.getDestination());
-                }
-                return states;
+                newStates.add(transition.getDestination());
             }
+            return newStates;
         });
     }
 
     private Set<Character> alphabetFor(Set<State> states)
     {
-        Set<Character> chars = new HashSet<Character>();
+        Set<Character> chars = new HashSet<>();
 
         for (State state : states)
         {
@@ -157,7 +150,7 @@ public class NFA extends FiniteAutomate<Transition>
 
     private Set<State> read(Set<State> states)
     {
-        Set<State> out = new HashSet<State>();
+        Set<State> out = new HashSet<>();
 
         for (State state : states)
         {
@@ -177,7 +170,7 @@ public class NFA extends FiniteAutomate<Transition>
 
     private Set<State> read(Set<State> states, char c)
     {
-        Set<State> out = new HashSet<State>();
+        Set<State> out = new HashSet<>();
 
         for (State state : states)
         {
@@ -192,7 +185,7 @@ public class NFA extends FiniteAutomate<Transition>
 
     private Set<State> readExplicit(Set<State> states, char c)
     {
-        Set<State> out = new HashSet<State>();
+        Set<State> out = new HashSet<>();
 
         for (State state : states)
         {
@@ -201,8 +194,7 @@ public class NFA extends FiniteAutomate<Transition>
             {
                 continue;
             }
-            for (final ExpectedTransition transition : map.getTransitionsFor(c,
-                                                                             Collections.<ExpectedTransition>emptySet()))
+            for (final ExpectedTransition transition : map.getTransitionsFor(c, Collections.emptySet()))
             {
                 out.add(transition.getDestination());
             }
@@ -239,17 +231,17 @@ public class NFA extends FiniteAutomate<Transition>
     @Override
     public DFA toDFA()
     {
-        final Set<State> states = new HashSet<State>();
-        final Set<ExpectedTransition> transitions = new HashSet<ExpectedTransition>();
+        final Set<State> states = new HashSet<>();
+        final Set<ExpectedTransition> transitions = new HashSet<>();
         final State start = getStartState();
-        final Set<State> accepting = new HashSet<State>();
+        final Set<State> accepting = new HashSet<>();
 
-        Map<Set<State>, State> knownStates = new HashMap<Set<State>, State>();
-        Queue<Pair<State, Set<State>>> stateQueue = new LinkedList<Pair<State, Set<State>>>();
+        Map<Set<State>, State> knownStates = new HashMap<>();
+        Queue<Pair<State, Set<State>>> stateQueue = new LinkedList<>();
 
         Set<State> initialClosure = getStartStates();
         System.out.println("1. " + start + " = ec(" + start + ") = " + initialClosure);
-        stateQueue.offer(new OrderedPair<State, Set<State>>(start, initialClosure));
+        stateQueue.offer(new OrderedPair<>(start, initialClosure));
         knownStates.put(initialClosure, start);
         if (willAccept(initialClosure))
         {
@@ -274,7 +266,7 @@ public class NFA extends FiniteAutomate<Transition>
                 {
                     State newState = new State();
                     states.add(newState);
-                    stateQueue.offer(new OrderedPair<State, Set<State>>(newState, newStateSet));
+                    stateQueue.offer(new OrderedPair<>(newState, newStateSet));
                     knownStates.put(newStateSet, newState);
                     transitions.add(new WildcardTransition(state, newState));
                     System.out.println(" = " + newState);
@@ -305,7 +297,7 @@ public class NFA extends FiniteAutomate<Transition>
                 {
                     State newState = new State();
                     states.add(newState);
-                    stateQueue.offer(new OrderedPair<State, Set<State>>(newState, newStateSet));
+                    stateQueue.offer(new OrderedPair<>(newState, newStateSet));
                     knownStates.put(newStateSet, newState);
                     transitions.add(new CharacterTransition(state, c, newState));
                     System.out.println(" = " + newState);

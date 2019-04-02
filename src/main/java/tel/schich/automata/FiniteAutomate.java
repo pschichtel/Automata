@@ -32,8 +32,6 @@ import tel.schich.automata.transition.ExpectedTransition;
 import tel.schich.automata.transition.SpontaneousTransition;
 import tel.schich.automata.transition.Transition;
 import tel.schich.automata.transition.WildcardTransition;
-import tel.schich.automata.util.FixPoint;
-import tel.schich.automata.util.Function;
 import tel.schich.automata.util.UnorderedPair;
 import tel.schich.automata.util.Util;
 
@@ -52,7 +50,7 @@ public abstract class FiniteAutomate<T extends Transition>
     protected FiniteAutomate(Set<State> states, Set<T> transitions, State start, Set<State> acceptingStates)
     {
 
-        states = new HashSet<State>(states);
+        states = new HashSet<>(states);
         states.addAll(acceptingStates);
         states.add(start);
 
@@ -65,23 +63,18 @@ public abstract class FiniteAutomate<T extends Transition>
 
     private Set<State> findReachableStates()
     {
-        return FixPoint.apply(Util.asSet(getStartState()), new Function<State, Set<State>>()
-        {
-            @Override
-            public Set<State> apply(State in)
+        return Util.fixPointIterate(Util.asSet(getStartState()), in -> {
+            Set<State> out = new HashSet<>();
+
+            for (Transition t : getTransitions())
             {
-                Set<State> out = new HashSet<State>();
-
-                for (Transition t : getTransitions())
+                if (t.getOrigin() == in)
                 {
-                    if (t.getOrigin() == in)
-                    {
-                        out.add(t.getDestination());
-                    }
+                    out.add(t.getDestination());
                 }
-
-                return out;
             }
+
+            return out;
         });
     }
 

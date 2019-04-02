@@ -43,7 +43,7 @@ public class TransitionMap
 
     public static TransitionMap build(Set<ExpectedTransition> transitions)
     {
-        final Map<Character, CharacterTransition> charTransitions = new HashMap<Character, CharacterTransition>();
+        final Map<Character, CharacterTransition> charTransitions = new HashMap<>();
         WildcardTransition wildcard = null;
 
         for (final ExpectedTransition t : transitions)

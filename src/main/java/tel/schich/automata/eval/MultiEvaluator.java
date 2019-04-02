@@ -32,7 +32,7 @@ public class MultiEvaluator implements StateMachineEvaluator
 
     public MultiEvaluator(Set<StateMachineEvaluator> evaluators)
     {
-        this.evaluators = new HashSet<StateMachineEvaluator>(evaluators);
+        this.evaluators = new HashSet<>(evaluators);
 
         this.currentlyAccepting = true;
         for (final StateMachineEvaluator evaluator : evaluators)

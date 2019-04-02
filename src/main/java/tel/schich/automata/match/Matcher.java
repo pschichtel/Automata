@@ -53,8 +53,8 @@ public abstract class Matcher
 
     public static DFA matchAll(char... chars)
     {
-        Set<State> states = new HashSet<State>();
-        Set<ExpectedTransition> transitions = new HashSet<ExpectedTransition>();
+        Set<State> states = new HashSet<>();
+        Set<ExpectedTransition> transitions = new HashSet<>();
         State start = new State();
 
         State lastState = start;
@@ -72,7 +72,7 @@ public abstract class Matcher
 
     public static DFA matchOne(char... chars)
     {
-        Set<ExpectedTransition> transitions = new HashSet<ExpectedTransition>();
+        Set<ExpectedTransition> transitions = new HashSet<>();
         State start = new State();
         State end = new State();
 

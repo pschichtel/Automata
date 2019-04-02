@@ -52,10 +52,10 @@ final class TransitionMultiMap
 
     public static TransitionMultiMap build(Set<Transition> transitions)
     {
-        Map<Character, Set<ExpectedTransition>> expectedTransitions = new HashMap<Character, Set<ExpectedTransition>>();
-        Set<SpontaneousTransition> spontaneousTransitions = new HashSet<SpontaneousTransition>();
-        Set<Character> expectedChars = new HashSet<Character>();
-        Set<WildcardTransition> wildcards = new HashSet<WildcardTransition>();
+        Map<Character, Set<ExpectedTransition>> expectedTransitions = new HashMap<>();
+        Set<SpontaneousTransition> spontaneousTransitions = new HashSet<>();
+        Set<Character> expectedChars = new HashSet<>();
+        Set<WildcardTransition> wildcards = new HashSet<>();
 
         for (Transition t : transitions)
         {
@@ -66,12 +66,7 @@ final class TransitionMultiMap
             else if (t instanceof CharacterTransition)
             {
                 CharacterTransition et = (CharacterTransition)t;
-                Set<ExpectedTransition> expected = expectedTransitions.get(et.getWith());
-                if (expected == null)
-                {
-                    expected = new HashSet<ExpectedTransition>();
-                    expectedTransitions.put(et.getWith(), expected);
-                }
+                Set<ExpectedTransition> expected = expectedTransitions.computeIfAbsent(et.getWith(), k -> new HashSet<>());
                 expected.add(et);
                 expectedChars.add(et.getWith());
             }
