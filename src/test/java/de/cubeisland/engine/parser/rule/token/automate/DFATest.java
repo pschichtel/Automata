@@ -38,6 +38,7 @@ import java.util.Set;
 import static de.cubeisland.engine.parser.Util.asSet;
 import static de.cubeisland.engine.parser.util.PrintingUtil.printAutomate;
 import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
@@ -83,18 +84,20 @@ public class DFATest
         State q7 = new NamedState("q7");
 
         Set<State> states = asSet(q0, q1, q2, q3, q4, q5, q6, q7);
-        Set<ExpectedTransition> transitions = Util.<ExpectedTransition>asSet(new CharacterTransition(q0, 'a', q1),
-                                                                             new CharacterTransition(q0, 'b', q2),
-                                                                             new CharacterTransition(q1, 'a', q3),
-                                                                             new CharacterTransition(q1, 'b', q3),
-                                                                             new CharacterTransition(q2, 'a', q4),
-                                                                             new CharacterTransition(q2, 'b', q4),
-                                                                             new CharacterTransition(q3, 'a', q1),
-                                                                             new CharacterTransition(q3, 'b', q1),
-                                                                             new CharacterTransition(q4, 'a', q2),
-                                                                             new CharacterTransition(q4, 'b', q2),
-                                                                             new CharacterTransition(q5, 'c', q6),
-                                                                             new CharacterTransition(q6, 'd', q7));
+        Set<ExpectedTransition> transitions = Util.<ExpectedTransition>asSet(
+                new CharacterTransition(q0, 'a', q1),
+                new CharacterTransition(q0, 'b', q2),
+                new CharacterTransition(q1, 'a', q3),
+                new CharacterTransition(q1, 'b', q3),
+                new CharacterTransition(q2, 'a', q4),
+                new CharacterTransition(q2, 'b', q4),
+                new CharacterTransition(q3, 'a', q1),
+                new CharacterTransition(q3, 'b', q1),
+                new CharacterTransition(q4, 'a', q2),
+                new CharacterTransition(q4, 'b', q2),
+                new CharacterTransition(q5, 'c', q6),
+                new CharacterTransition(q6, 'd', q7)
+        );
 
         DFA stroeti51 = new DFA(states, transitions, q0, asSet(q3, q4));
 
@@ -125,14 +128,18 @@ public class DFATest
         printAutomate("complement a", aComplement);
         printAutomate("complement complement a", aAgain);
 
-        assertTrue("accepted char was accepted by complement",
-                   a.isAccepting(a.getStartState().transition(a, acceptedChar)) != aComplement.isAccepting(aComplement.getStartState().transition(aComplement, acceptedChar)));
-        assertTrue("rejected char was not accepted by complement",
-                   a.isAccepting(a.getStartState().transition(a, rejectedChar)) != aComplement.isAccepting(aComplement.getStartState().transition(aComplement, rejectedChar)));
-        assertTrue("accepted char was accepted by complement of complement of a",
-                   a.isAccepting(a.getStartState().transition(a, acceptedChar)) == aAgain.isAccepting(aAgain.getStartState().transition(aAgain, acceptedChar)));
-        assertTrue("rejected char was not accepted by complement of complement of a",
-                   a.isAccepting(a.getStartState().transition(a, rejectedChar)) == aAgain.isAccepting(aAgain.getStartState().transition(aAgain, rejectedChar)));
+        assertEquals("accepted char was accepted by complement",
+                a.isAccepting(a.getStartState().transition(a, acceptedChar)),
+                !aComplement.isAccepting(aComplement.getStartState().transition(aComplement, acceptedChar)));
+        assertEquals("rejected char was not accepted by complement",
+                a.isAccepting(a.getStartState().transition(a, rejectedChar)),
+                !aComplement.isAccepting(aComplement.getStartState().transition(aComplement, rejectedChar)));
+        assertEquals("accepted char was accepted by complement of complement of a",
+                a.isAccepting(a.getStartState().transition(a, acceptedChar)),
+                aAgain.isAccepting(aAgain.getStartState().transition(aAgain, acceptedChar)));
+        assertEquals("rejected char was not accepted by complement of complement of a",
+                a.isAccepting(a.getStartState().transition(a, rejectedChar)),
+                aAgain.isAccepting(aAgain.getStartState().transition(aAgain, rejectedChar)));
     }
 
     @Test

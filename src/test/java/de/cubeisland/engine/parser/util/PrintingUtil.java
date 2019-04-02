@@ -22,29 +22,13 @@
  */
 package de.cubeisland.engine.parser.util;
 
-import de.cubeisland.engine.parser.Variable;
 import de.cubeisland.engine.parser.rule.token.automate.FiniteAutomate;
 import de.cubeisland.engine.parser.rule.token.automate.transition.Transition;
-
-import java.util.Map;
-import java.util.Set;
 
 public abstract class PrintingUtil
 {
     private PrintingUtil()
     {}
-
-    public static void printTokenStringMap(Map<Variable, Set<TokenString>> map)
-    {
-        for (Map.Entry<Variable, Set<TokenString>> entry : map.entrySet())
-        {
-            System.out.println(entry.getKey());
-            for (TokenString tokenString : entry.getValue())
-            {
-                System.out.println("\t" + tokenString);
-            }
-        }
-    }
 
     public static void printAutomate(String name, FiniteAutomate<? extends Transition> a)
     {
