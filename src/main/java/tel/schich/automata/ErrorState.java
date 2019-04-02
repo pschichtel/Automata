@@ -22,9 +22,11 @@
  */
 package tel.schich.automata;
 
-public class ErrorState extends State
+final public class ErrorState extends State
 {
     public static final ErrorState ERROR = new ErrorState();
+
+    private ErrorState() {}
 
     @Override
     public State transition(DFA a, char c)
