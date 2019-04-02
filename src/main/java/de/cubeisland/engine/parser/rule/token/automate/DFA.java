@@ -137,18 +137,10 @@ public class DFA extends FiniteAutomate<ExpectedTransition>
         return new NFA(getStates(), transitions, getStartState(), getAcceptingStates());
     }
 
-    public DFA complete()
-    {
-        final Set<State> states = new HashSet<State>(getStates());
-        final Set<ExpectedTransition> transitions = new HashSet<ExpectedTransition>(getTransitions());
-        final State start = getStartState();
-        final Set<State> accepting = getAcceptingStates();
-
-        final State catchAll = new State();
-        states.add(catchAll);
+    public boolean isComplete() {
 
         Set<State> stateWithWildcard = new HashSet<State>();
-        for (final ExpectedTransition transition : transitions)
+        for (final ExpectedTransition transition : getTransitions())
         {
             if (transition instanceof WildcardTransition)
             {
@@ -156,15 +148,43 @@ public class DFA extends FiniteAutomate<ExpectedTransition>
             }
         }
 
-        for (State state : states)
+        return stateWithWildcard.size() == getStates().size();
+    }
+
+    public DFA complete()
+    {
+
+        Set<State> stateWithWildcard = new HashSet<State>();
+        for (final ExpectedTransition transition : getTransitions())
         {
-            if (!stateWithWildcard.contains(state))
+            if (transition instanceof WildcardTransition)
             {
-                transitions.add(new WildcardTransition(state, catchAll));
+                stateWithWildcard.add(transition.getOrigin());
             }
         }
 
-        return new DFA(states, transitions, start, accepting);
+        if (stateWithWildcard.size() < getStates().size())
+        {
+            final Set<State> states = new HashSet<State>(getStates());
+            final Set<ExpectedTransition> transitions = new HashSet<ExpectedTransition>(getTransitions());
+            final State start = getStartState();
+            final Set<State> accepting = getAcceptingStates();
+
+            final State catchAll = new State();
+            states.add(catchAll);
+
+            for (State state : states)
+            {
+                if (!stateWithWildcard.contains(state))
+                {
+                    transitions.add(new WildcardTransition(state, catchAll));
+                }
+            }
+
+            return new DFA(states, transitions, start, accepting);
+        }
+
+        return this;
     }
 
     public DFA combine(FiniteAutomate<? extends Transition> o, Combination combination)

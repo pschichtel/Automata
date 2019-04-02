@@ -40,6 +40,7 @@ import static de.cubeisland.engine.parser.util.PrintingUtil.printAutomate;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
@@ -108,6 +109,22 @@ public class DFATest
 
         assertThat("Start states not equal", minimized.getStartState(), is(stroeti51.getStartState()));
         assertThat("Unexpected number of states", minimized.getStates().size(), is(3));
+    }
+
+    @Test
+    public void testComplete() throws Exception
+    {
+        final State s1 = new State();
+        final State s2 = new State();
+        final char acceptedChar = 'a';
+
+        final ExpectedTransition t = new CharacterTransition(s1, acceptedChar, s2);
+
+        final DFA a = new DFA(asSet(s1, s2), asSet(t), s1, asSet(s2));
+        final DFA completeA = a.complete();
+        final DFA completeCompleteA = completeA.complete();
+
+        assertSame("repeated complete() calls should not change anything", completeA, completeCompleteA);
     }
 
     @Test
