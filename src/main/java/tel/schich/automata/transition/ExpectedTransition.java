@@ -20,22 +20,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package tel.schich.automata.rule.token;
+package tel.schich.automata.transition;
 
-import tel.schich.automata.input.CharacterStream;
-import tel.schich.automata.input.source.CharSequenceSource;
+import tel.schich.automata.State;
 
-import org.junit.Test;
-
-public class CharacterStreamTest
+public abstract class ExpectedTransition extends Transition
 {
-    @Test(/*expected = IllegalStateException.class*/)
-    public void testCharSequenceStream()
+    public ExpectedTransition(State origin, State destination)
     {
-        CharacterStream stream = new CharacterStream(new CharSequenceSource("abc"));
-
-        System.out.println(stream.next());
-        System.out.println(stream.next());
-        System.out.println(stream.next());
+        super(origin, destination);
     }
 }

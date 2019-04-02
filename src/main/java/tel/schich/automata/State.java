@@ -20,22 +20,42 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package tel.schich.automata.rule.token;
+package tel.schich.automata;
 
-import tel.schich.automata.input.CharacterStream;
-import tel.schich.automata.input.source.CharSequenceSource;
+import java.util.concurrent.atomic.AtomicInteger;
 
-import org.junit.Test;
-
-public class CharacterStreamTest
+public class State
 {
-    @Test(/*expected = IllegalStateException.class*/)
-    public void testCharSequenceStream()
-    {
-        CharacterStream stream = new CharacterStream(new CharSequenceSource("abc"));
+    private static final AtomicInteger COUNTER = new AtomicInteger(0);
 
-        System.out.println(stream.next());
-        System.out.println(stream.next());
-        System.out.println(stream.next());
+    private final int id = COUNTER.getAndIncrement();
+
+    public State transition(DFA a, char c)
+    {
+        return a.transition(this, c);
+    }
+
+    public State transition(DFA a)
+    {
+        return a.getByWildcard(this);
+    }
+
+    @Override
+    public boolean equals(Object o)
+    {
+        // two different state instances cannot be equal
+        return this == o;
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return id;
+    }
+
+    @Override
+    public String toString()
+    {
+        return "State(" + this.id + ")";
     }
 }

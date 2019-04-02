@@ -20,22 +20,53 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package tel.schich.automata.rule.token;
+package tel.schich.automata.transition;
 
-import tel.schich.automata.input.CharacterStream;
-import tel.schich.automata.input.source.CharSequenceSource;
+import tel.schich.automata.State;
 
-import org.junit.Test;
-
-public class CharacterStreamTest
+public class CharacterTransition extends ExpectedTransition
 {
-    @Test(/*expected = IllegalStateException.class*/)
-    public void testCharSequenceStream()
-    {
-        CharacterStream stream = new CharacterStream(new CharSequenceSource("abc"));
+    private final char with;
 
-        System.out.println(stream.next());
-        System.out.println(stream.next());
-        System.out.println(stream.next());
+    public CharacterTransition(State origin, char with, State destination)
+    {
+        super(origin, destination);
+        this.with = with;
+    }
+
+    public char getWith()
+    {
+        return this.with;
+    }
+
+    @Override
+    public String getLabel()
+    {
+        return "'" + getWith() + "'";
+    }
+
+    @Override
+    public boolean equals(Object o)
+    {
+        if (!(o instanceof CharacterTransition))
+        {
+            return false;
+        }
+        if (!super.equals(o))
+        {
+            return false;
+        }
+
+        CharacterTransition that = (CharacterTransition)o;
+
+        return this.with == that.with;
+    }
+
+    @Override
+    public int hashCode()
+    {
+        int result = super.hashCode();
+        result = 31 * result + (int)with;
+        return result;
     }
 }

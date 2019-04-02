@@ -22,14 +22,18 @@
  */
 package tel.schich.automata.rule.token.automate;
 
-import tel.schich.automata.Util;
-import tel.schich.automata.rule.token.automate.eval.Evaluator;
-import tel.schich.automata.rule.token.automate.eval.StateMachineEvaluator;
-import tel.schich.automata.rule.token.automate.match.Matcher;
-import tel.schich.automata.rule.token.automate.transition.CharacterTransition;
-import tel.schich.automata.rule.token.automate.transition.ExpectedTransition;
-import tel.schich.automata.rule.token.automate.transition.Transition;
-import tel.schich.automata.rule.token.automate.transition.WildcardTransition;
+import tel.schich.automata.DFA;
+import tel.schich.automata.FiniteAutomate;
+import tel.schich.automata.NamedState;
+import tel.schich.automata.State;
+import tel.schich.automata.util.Util;
+import tel.schich.automata.eval.Evaluator;
+import tel.schich.automata.eval.StateMachineEvaluator;
+import tel.schich.automata.match.Matcher;
+import tel.schich.automata.transition.CharacterTransition;
+import tel.schich.automata.transition.ExpectedTransition;
+import tel.schich.automata.transition.Transition;
+import tel.schich.automata.transition.WildcardTransition;
 import tel.schich.automata.util.PrintingUtil;
 
 import org.junit.Test;

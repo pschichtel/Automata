@@ -20,22 +20,38 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package tel.schich.automata.rule.token;
+package tel.schich.automata.eval;
 
-import tel.schich.automata.input.CharacterStream;
-import tel.schich.automata.input.source.CharSequenceSource;
+import tel.schich.automata.DFA;
+import tel.schich.automata.State;
 
-import org.junit.Test;
-
-public class CharacterStreamTest
+public class DFAEvaluator implements StateMachineEvaluator
 {
-    @Test(/*expected = IllegalStateException.class*/)
-    public void testCharSequenceStream()
-    {
-        CharacterStream stream = new CharacterStream(new CharSequenceSource("abc"));
+    private final DFA automate;
+    private State current;
 
-        System.out.println(stream.next());
-        System.out.println(stream.next());
-        System.out.println(stream.next());
+    public DFAEvaluator(DFA automate)
+    {
+        this.automate = automate;
+        this.current = automate.getStartState();
+    }
+
+    @Override
+    public boolean transition(char c)
+    {
+        this.current = this.current.transition(this.automate, c);
+        return isCurrentAccepting();
+    }
+
+    @Override
+    public boolean isCurrentAccepting()
+    {
+        return this.automate.isAccepting(this.current);
+    }
+
+    @Override
+    public String toString()
+    {
+        return this.current.toString();
     }
 }

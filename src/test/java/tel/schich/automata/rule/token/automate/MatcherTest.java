@@ -23,7 +23,10 @@
 package tel.schich.automata.rule.token.automate;
 
 import java.util.regex.Pattern;
-import tel.schich.automata.rule.token.automate.match.Matcher;
+
+import tel.schich.automata.DFA;
+import tel.schich.automata.NFA;
+import tel.schich.automata.match.Matcher;
 import tel.schich.automata.util.PrintingUtil;
 import org.junit.Test;
 

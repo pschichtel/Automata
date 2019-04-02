@@ -20,23 +20,45 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package tel.schich.automata.util;
+package tel.schich.automata.eval;
 
+import java.util.HashSet;
+import java.util.Set;
+import tel.schich.automata.DFA;
 import tel.schich.automata.FiniteAutomate;
+import tel.schich.automata.NFA;
 import tel.schich.automata.transition.Transition;
 
-public abstract class PrintingUtil
+public class Evaluator
 {
-    private PrintingUtil()
-    {}
-
-    public static void printAutomate(String name, FiniteAutomate<? extends Transition> a)
+    public static StateMachineEvaluator eval(FiniteAutomate<? extends Transition>... automates)
     {
-        System.out.println(name + ":");
-        System.out.println("States:      " + a.getStates());
-        System.out.println("Transitions: " + a.getTransitions());
-        System.out.println("Accepting:   " + a.getAcceptingStates());
-        System.out.println("Start:       " + a.getStartState());
-        System.out.println();
+        if (automates.length == 0)
+        {
+            throw new IllegalArgumentException("No automate given!");
+        }
+        if (automates.length == 1)
+        {
+            return evaluatorFor(automates[0]);
+        }
+        final Set<StateMachineEvaluator> evaluators = new HashSet<StateMachineEvaluator>();
+        for (final FiniteAutomate<? extends Transition> automate : automates)
+        {
+            evaluators.add(evaluatorFor(automate));
+        }
+        return new MultiEvaluator(evaluators);
+    }
+
+    private static StateMachineEvaluator evaluatorFor(FiniteAutomate<? extends Transition> automate)
+    {
+        if (automate instanceof DFA)
+        {
+            return new DFAEvaluator((DFA)automate);
+        }
+        if (automate instanceof NFA)
+        {
+            return new NFAEvaluator((NFA)automate);
+        }
+        throw new IllegalArgumentException("Unknown automate type: " + automate.getClass());
     }
 }

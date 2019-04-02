@@ -20,22 +20,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package tel.schich.automata.rule.token;
+package tel.schich.automata.input;
 
-import tel.schich.automata.input.CharacterStream;
-import tel.schich.automata.input.source.CharSequenceSource;
+import java.io.IOException;
 
-import org.junit.Test;
-
-public class CharacterStreamTest
+public interface InputSource extends Iterable<Character>
 {
-    @Test(/*expected = IllegalStateException.class*/)
-    public void testCharSequenceStream()
-    {
-        CharacterStream stream = new CharacterStream(new CharSequenceSource("abc"));
+    boolean isDepleted() throws IOException;
 
-        System.out.println(stream.next());
-        System.out.println(stream.next());
-        System.out.println(stream.next());
-    }
+    char read() throws IOException, CharacterStream.SourceDepletedException;
+
+    CharacterStream stream();
 }

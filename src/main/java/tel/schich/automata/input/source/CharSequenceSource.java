@@ -20,22 +20,48 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package tel.schich.automata.rule.token;
+package tel.schich.automata.input.source;
 
+import java.util.Iterator;
 import tel.schich.automata.input.CharacterStream;
-import tel.schich.automata.input.source.CharSequenceSource;
+import tel.schich.automata.input.InputSource;
 
-import org.junit.Test;
-
-public class CharacterStreamTest
+public class CharSequenceSource implements InputSource
 {
-    @Test(/*expected = IllegalStateException.class*/)
-    public void testCharSequenceStream()
-    {
-        CharacterStream stream = new CharacterStream(new CharSequenceSource("abc"));
+    private final CharSequence seq;
+    private int offset;
 
-        System.out.println(stream.next());
-        System.out.println(stream.next());
-        System.out.println(stream.next());
+    public CharSequenceSource(CharSequence seq)
+    {
+        this.seq = seq;
+        this.offset = 0;
+    }
+
+    @Override
+    public boolean isDepleted()
+    {
+        return this.offset >= this.seq.length();
+    }
+
+    @Override
+    public char read() throws CharacterStream.SourceDepletedException
+    {
+        if (isDepleted())
+        {
+            throw new CharacterStream.SourceDepletedException("There are no more characters in this CharSequence!");
+        }
+        return this.seq.charAt(this.offset++);
+    }
+
+    @Override
+    public CharacterStream stream()
+    {
+        return new CharacterStream(this);
+    }
+
+    @Override
+    public Iterator<Character> iterator()
+    {
+        return stream();
     }
 }

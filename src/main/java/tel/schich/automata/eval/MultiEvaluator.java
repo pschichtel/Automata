@@ -20,22 +20,49 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package tel.schich.automata.rule.token;
+package tel.schich.automata.eval;
 
-import tel.schich.automata.input.CharacterStream;
-import tel.schich.automata.input.source.CharSequenceSource;
+import java.util.HashSet;
+import java.util.Set;
 
-import org.junit.Test;
-
-public class CharacterStreamTest
+public class MultiEvaluator implements StateMachineEvaluator
 {
-    @Test(/*expected = IllegalStateException.class*/)
-    public void testCharSequenceStream()
-    {
-        CharacterStream stream = new CharacterStream(new CharSequenceSource("abc"));
+    private final Set<StateMachineEvaluator> evaluators;
+    private boolean currentlyAccepting;
 
-        System.out.println(stream.next());
-        System.out.println(stream.next());
-        System.out.println(stream.next());
+    public MultiEvaluator(Set<StateMachineEvaluator> evaluators)
+    {
+        this.evaluators = new HashSet<StateMachineEvaluator>(evaluators);
+
+        this.currentlyAccepting = true;
+        for (final StateMachineEvaluator evaluator : evaluators)
+        {
+            if (!evaluator.isCurrentAccepting())
+            {
+                this.currentlyAccepting = false;
+                break;
+            }
+        }
+    }
+
+    @Override
+    public boolean transition(char c)
+    {
+        this.currentlyAccepting = true;
+        for (final StateMachineEvaluator evaluator : evaluators)
+        {
+            if (!evaluator.transition(c))
+            {
+                this.currentlyAccepting = false;
+                break;
+            }
+        }
+        return isCurrentAccepting();
+    }
+
+    @Override
+    public boolean isCurrentAccepting()
+    {
+        return this.currentlyAccepting;
     }
 }

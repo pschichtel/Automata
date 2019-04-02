@@ -20,22 +20,42 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package tel.schich.automata.rule.token;
+package tel.schich.automata.eval;
 
-import tel.schich.automata.input.CharacterStream;
-import tel.schich.automata.input.source.CharSequenceSource;
+import java.util.Set;
+import tel.schich.automata.NFA;
+import tel.schich.automata.State;
 
-import org.junit.Test;
-
-public class CharacterStreamTest
+public class NFAEvaluator implements StateMachineEvaluator
 {
-    @Test(/*expected = IllegalStateException.class*/)
-    public void testCharSequenceStream()
-    {
-        CharacterStream stream = new CharacterStream(new CharSequenceSource("abc"));
+    private final NFA automate;
+    private Set<State> currentStates;
+    private boolean currentlyAccepting;
 
-        System.out.println(stream.next());
-        System.out.println(stream.next());
-        System.out.println(stream.next());
+    public NFAEvaluator(NFA automate)
+    {
+        this.automate = automate;
+        this.currentStates = automate.getStartStates();
+        this.currentlyAccepting = automate.isAccepting(this.currentStates);
+    }
+
+    @Override
+    public boolean transition(char c)
+    {
+        this.currentStates = this.automate.transition(this.currentStates, c);
+        this.currentlyAccepting = this.automate.isAccepting(this.currentStates);
+        return isCurrentAccepting();
+    }
+
+    @Override
+    public boolean isCurrentAccepting()
+    {
+        return this.currentlyAccepting;
+    }
+
+    @Override
+    public String toString()
+    {
+        return this.currentStates.toString();
     }
 }

@@ -20,22 +20,21 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package tel.schich.automata.rule.token;
+package tel.schich.automata;
 
-import tel.schich.automata.input.CharacterStream;
-import tel.schich.automata.input.source.CharSequenceSource;
-
-import org.junit.Test;
-
-public class CharacterStreamTest
+public class ErrorState extends State
 {
-    @Test(/*expected = IllegalStateException.class*/)
-    public void testCharSequenceStream()
-    {
-        CharacterStream stream = new CharacterStream(new CharSequenceSource("abc"));
+    public static final ErrorState ERROR = new ErrorState();
 
-        System.out.println(stream.next());
-        System.out.println(stream.next());
-        System.out.println(stream.next());
+    @Override
+    public State transition(DFA a, char c)
+    {
+        return this;
+    }
+
+    @Override
+    public String toString()
+    {
+        return "State(ERROR)";
     }
 }
