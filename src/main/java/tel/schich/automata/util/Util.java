@@ -28,9 +28,6 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Function;
 
-import tel.schich.automata.util.OrderedPair;
-import tel.schich.automata.util.UnorderedPair;
-
 public abstract class Util
 {
     private Util()
@@ -51,7 +48,7 @@ public abstract class Util
         {
             for (R r : right)
             {
-                out.add(new OrderedPair<L, R>(l, r));
+                out.add(new OrderedPair<>(l, r));
             }
         }
 
@@ -60,13 +57,13 @@ public abstract class Util
 
     public static <L, R> Set<UnorderedPair<L, R>> unorderedMultiply(Set<L> left, Set<R> right)
     {
-        Set<UnorderedPair<L, R>> out = new HashSet<UnorderedPair<L, R>>();
+        Set<UnorderedPair<L, R>> out = new HashSet<>();
 
         for (L l : left)
         {
             for (R r : right)
             {
-                out.add(new UnorderedPair<L, R>(l, r));
+                out.add(new UnorderedPair<>(l, r));
             }
         }
 
@@ -87,12 +84,12 @@ public abstract class Util
 
     public static <T> Set<T> fixPointIterate(Set<T> in, Function<T, Set<T>> func)
     {
-        Set<T> result = new HashSet<T>(in);
-        Set<T> newElements = new HashSet<T>(in);
+        Set<T> result = new HashSet<>(in);
+        Set<T> newElements = new HashSet<>(in);
 
         while (true)
         {
-            Set<T> temp = new HashSet<T>();
+            Set<T> temp = new HashSet<>();
             for (T element : newElements)
             {
                 temp.addAll(func.apply(element));

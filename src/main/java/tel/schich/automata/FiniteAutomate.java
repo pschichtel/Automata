@@ -27,16 +27,18 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
+
 import tel.schich.automata.transition.CharacterTransition;
 import tel.schich.automata.transition.ExpectedTransition;
 import tel.schich.automata.transition.SpontaneousTransition;
 import tel.schich.automata.transition.Transition;
 import tel.schich.automata.transition.WildcardTransition;
 import tel.schich.automata.util.UnorderedPair;
-import tel.schich.automata.util.Util;
 
 import static java.util.Collections.disjoint;
 import static java.util.Collections.unmodifiableSet;
+import static tel.schich.automata.util.Util.asSet;
+import static tel.schich.automata.util.Util.fixPointIterate;
 
 public abstract class FiniteAutomate<T extends Transition>
 {
@@ -63,7 +65,7 @@ public abstract class FiniteAutomate<T extends Transition>
 
     private Set<State> findReachableStates()
     {
-        return Util.fixPointIterate(Util.asSet(getStartState()), in -> {
+        return fixPointIterate(asSet(getStartState()), in -> {
             Set<State> out = new HashSet<>();
 
             for (Transition t : getTransitions())
@@ -149,7 +151,7 @@ public abstract class FiniteAutomate<T extends Transition>
             transitions.add(new SpontaneousTransition(state, accept));
         }
 
-        return new NFA(states, transitions, start, Util.asSet(accept));
+        return new NFA(states, transitions, start, asSet(accept));
     }
 
     public NFA kleenePlus()
@@ -167,13 +169,13 @@ public abstract class FiniteAutomate<T extends Transition>
             transitions.add(new SpontaneousTransition(state, accept));
         }
 
-        return new NFA(states, transitions, start, Util.asSet(accept));
+        return new NFA(states, transitions, start, asSet(accept));
     }
 
     public NFA kleeneStar()
     {
         final NFA base = kleenePlus();
-        final Set<Transition> transitions = new HashSet<Transition>(base.getTransitions());
+        final Set<Transition> transitions = new HashSet<>(base.getTransitions());
         for (final State state : base.getAcceptingStates())
         {
             transitions.add(new SpontaneousTransition(base.getStartState(), state));
@@ -252,12 +254,12 @@ public abstract class FiniteAutomate<T extends Transition>
             return DFA.EMPTY;
         }
         DFA self = toDFA();
-        final Set<State> states = new HashSet<State>(self.getReachableStates());
+        final Set<State> states = new HashSet<>(self.getReachableStates());
         final Set<ExpectedTransition> transitions = new CopyOnWriteArraySet<ExpectedTransition>(self.getTransitions());
         State start = self.getStartState();
-        final Set<State> accepting = new HashSet<State>(self.getAcceptingStates());
+        final Set<State> accepting = new HashSet<>(self.getAcceptingStates());
 
-        Set<UnorderedPair<State, State>> statePairs = new HashSet<UnorderedPair<State, State>>();
+        Set<UnorderedPair<State, State>> statePairs = new HashSet<>();
 
         for (State p : states)
         {
@@ -367,13 +369,13 @@ public abstract class FiniteAutomate<T extends Transition>
             }
         }
 
-        return new DFA(states, new HashSet<ExpectedTransition>(transitions), start, accepting);
+        return new DFA(states, new HashSet<>(transitions), start, accepting);
     }
 
     public DFA complement()
     {
         final DFA complete = toDFA().complete();
-        final Set<State> accepting = new HashSet<State>(complete.getStates());
+        final Set<State> accepting = new HashSet<>(complete.getStates());
         accepting.removeAll(complete.getAcceptingStates());
 
         return new DFA(complete.getStates(), complete.getTransitions(), complete.getStartState(), accepting);
@@ -388,12 +390,12 @@ public abstract class FiniteAutomate<T extends Transition>
         return disjoint(getReachableStates(), getAcceptingStates());
     }
 
-    public boolean equivalentTo(FiniteAutomate<? extends Transition> o)
+    public boolean isEquivalentTo(FiniteAutomate<? extends Transition> o)
     {
         final DFA self = toDFA();
         final DFA other = o.toDFA();
 
-        return self.without(other).isEmpty() && other.without(self).isEmpty();
+        return self.difference(other).isEmpty() && other.difference(self).isEmpty();
     }
 
     @Override
@@ -469,35 +471,5 @@ public abstract class FiniteAutomate<T extends Transition>
             t.add(transition);
         }
         return stateTransitions;
-    }
-
-    public enum Combination
-    {
-        UNION
-            {
-                @Override
-                public boolean isAccepting(boolean a, boolean b)
-                {
-                    return a || b;
-                }
-            },
-        INTERSECTION
-            {
-                @Override
-                public boolean isAccepting(boolean a, boolean b)
-                {
-                    return a && b;
-                }
-            },
-        DIFFERENCE
-            {
-                @Override
-                public boolean isAccepting(boolean a, boolean b)
-                {
-                    return a && !b;
-                }
-            };
-
-        public abstract boolean isAccepting(boolean a, boolean b);
     }
 }

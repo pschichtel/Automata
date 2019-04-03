@@ -22,10 +22,7 @@
  */
 package tel.schich.automata;
 
-import tel.schich.automata.DFA;
-import tel.schich.automata.FiniteAutomate;
-import tel.schich.automata.NamedState;
-import tel.schich.automata.State;
+import tel.schich.automata.match.RegexParser;
 import tel.schich.automata.util.Util;
 import tel.schich.automata.eval.Evaluator;
 import tel.schich.automata.eval.StateMachineEvaluator;
@@ -125,8 +122,13 @@ public class DFATest
         final ExpectedTransition t = new CharacterTransition(s1, acceptedChar, s2);
 
         final DFA a = new DFA(Util.asSet(s1, s2), Util.asSet(t), s1, Util.asSet(s2));
+        assertFalse("a should not be complete", a.isComplete());
+
         final DFA completeA = a.complete();
+        assertTrue("completeA should be complete", completeA.isComplete());
+
         final DFA completeCompleteA = completeA.complete();
+        assertTrue("completeCompleteA should still be complete", completeCompleteA.isComplete());
 
         assertSame("repeated complete() calls should not change anything", completeA, completeCompleteA);
     }
@@ -356,7 +358,19 @@ public class DFATest
     @Test
     public void testEquivalence() throws Exception
     {
+        DFA a = RegexParser.toDFA("a");
+        DFA b = RegexParser.toDFA("a");
+        DFA c = RegexParser.toDFA("c");
 
+        assertTrue("a and b should be equivalent", a.isEquivalentTo(b));
+        assertFalse("a and c should not be equivalent", a.isEquivalentTo(c));
+
+        DFA complexA = RegexParser.toDFA(".*a");
+        DFA complexB = RegexParser.toDFA("a");
+        DFA complexC = RegexParser.toDFA("c");
+
+        assertFalse("complexA and complexB should be equivalent", complexA.isEquivalentTo(complexB));
+        assertFalse("complexA and complexC should not be equivalent", complexA.isEquivalentTo(complexC));
 
     }
 }

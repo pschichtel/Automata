@@ -28,13 +28,16 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.function.BiPredicate;
+
 import tel.schich.automata.transition.CharacterTransition;
 import tel.schich.automata.transition.ExpectedTransition;
 import tel.schich.automata.transition.Transition;
 import tel.schich.automata.transition.WildcardTransition;
 import tel.schich.automata.util.OrderedPair;
 import tel.schich.automata.util.Pair;
-import tel.schich.automata.util.Util;
+
+import static tel.schich.automata.util.Util.asSet;
 
 public class DFA extends FiniteAutomate<ExpectedTransition>
 {
@@ -44,7 +47,7 @@ public class DFA extends FiniteAutomate<ExpectedTransition>
     {
         State a = new State();
         State b = new State();
-        EMPTY = new DFA(Util.asSet(a, b), Collections.emptySet(), a, Util.asSet(b));
+        EMPTY = new DFA(asSet(a, b), Collections.emptySet(), a, asSet(b));
     }
 
     private final Map<State, TransitionMap> transitionLookup;
@@ -181,7 +184,8 @@ public class DFA extends FiniteAutomate<ExpectedTransition>
         return this;
     }
 
-    public DFA combine(FiniteAutomate<? extends Transition> o, Combination combination)
+
+    public DFA combine(FiniteAutomate<? extends Transition> o, BiPredicate<Boolean, Boolean> shouldAccept)
     {
         final DFA self = toDFA();
         final DFA other = o.toDFA();
@@ -197,7 +201,7 @@ public class DFA extends FiniteAutomate<ExpectedTransition>
             {
                 final State newState = new State();
                 stateMap.put(new OrderedPair<>(selfState, otherState), newState);
-                if (combination.isAccepting(self.isAccepting(selfState), other.isAccepting(otherState)))
+                if (shouldAccept.test(self.isAccepting(selfState), other.isAccepting(otherState)))
                 {
                     accepting.add(newState);
                 }
@@ -271,18 +275,22 @@ public class DFA extends FiniteAutomate<ExpectedTransition>
         return new DFA(new HashSet<>(stateMap.values()), transitions, start, accepting);
     }
 
+    public DFA difference(FiniteAutomate<? extends Transition> other) {
+        return this.intersectWith(other.complement());
+    }
+
     public DFA union(FiniteAutomate<? extends Transition> other)
     {
-        return combine(other, Combination.UNION);
+        return combine(other, (a, b) -> a || b);
     }
 
     public DFA intersectWith(FiniteAutomate<? extends Transition> other)
     {
-        return combine(other, Combination.INTERSECTION);
+        return combine(other, (a, b) -> a && b);
     }
 
     public DFA without(FiniteAutomate<? extends Transition> other)
     {
-        return combine(other, Combination.DIFFERENCE);
+        return combine(other, (a, b) -> a && !b);
     }
 }

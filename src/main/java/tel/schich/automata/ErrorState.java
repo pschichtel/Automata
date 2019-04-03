@@ -22,7 +22,7 @@
  */
 package tel.schich.automata;
 
-final public class ErrorState extends State
+public final class ErrorState extends State
 {
     public static final ErrorState ERROR = new ErrorState();
 

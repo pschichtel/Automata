@@ -37,9 +37,9 @@ import tel.schich.automata.transition.Transition;
 import tel.schich.automata.transition.WildcardTransition;
 import tel.schich.automata.util.OrderedPair;
 import tel.schich.automata.util.Pair;
-import tel.schich.automata.util.Util;
 
 import static tel.schich.automata.util.Util.asSet;
+import static tel.schich.automata.util.Util.fixPointIterate;
 
 public class NFA extends FiniteAutomate<Transition>
 {
@@ -50,8 +50,8 @@ public class NFA extends FiniteAutomate<Transition>
     {
         State a = new State();
         State b = new State();
-        EPSILON = new NFA(Util.asSet(a, b), Util.asSet(new SpontaneousTransition(a, b)), a, Util.asSet(b));
-        EMPTY = new NFA(Util.asSet(a, b), Collections.emptySet(), a, Util.asSet(b));
+        EPSILON = new NFA(asSet(a, b), asSet(new SpontaneousTransition(a, b)), a, asSet(b));
+        EMPTY = new NFA(asSet(a, b), Collections.emptySet(), a, asSet(b));
     }
 
     public Set<State> getStartStates()
@@ -69,7 +69,7 @@ public class NFA extends FiniteAutomate<Transition>
 
     private static Map<State, TransitionMultiMap> calculateTransitionLookup(Set<Transition> transitions)
     {
-        Map<State, TransitionMultiMap> transitionLookup = new HashMap<State, TransitionMultiMap>();
+        Map<State, TransitionMultiMap> transitionLookup = new HashMap<>();
 
         for (Map.Entry<State, Set<Transition>> entry : groupByState(transitions).entrySet())
         {
@@ -111,7 +111,7 @@ public class NFA extends FiniteAutomate<Transition>
 
     public Set<State> epsilonClosure(Set<State> states)
     {
-        return Util.fixPointIterate(states, in -> {
+        return fixPointIterate(states, in -> {
             Set<State> newStates = new HashSet<>();
             for (SpontaneousTransition transition : getSpontaneousTransitionsFor(in))
             {
