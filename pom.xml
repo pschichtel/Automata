@@ -10,7 +10,7 @@
 
     <groupId>de.schich.automata</groupId>
     <artifactId>automata</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>0.1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>Automata</name>
