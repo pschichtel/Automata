@@ -40,6 +40,6 @@ public class NamedState extends State
     @Override
     public String toString()
     {
-        return this.name;
+        return "State(" + this.name + ")";
     }
 }

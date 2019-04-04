@@ -199,7 +199,7 @@ public class DFA extends FiniteAutomate<ExpectedTransition>
         {
             for (final State otherState : other.getStates())
             {
-                final State newState = new NamedState(selfState.getId() + "|" + otherState.getId());
+                final State newState = new NamedState(selfState.getLabel() + "|" + otherState.getLabel());
                 stateMap.put(new OrderedPair<>(selfState, otherState), newState);
                 if (shouldAccept.test(self.isAccepting(selfState), other.isAccepting(otherState)))
                 {
