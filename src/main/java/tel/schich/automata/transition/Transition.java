@@ -31,6 +31,14 @@ public abstract class Transition
 
     public Transition(State origin, State destination)
     {
+        if (origin == null)
+        {
+            throw new NullPointerException("origin");
+        }
+        if (destination == null)
+        {
+            throw new NullPointerException("destination");
+        }
         this.origin = origin;
         this.destination = destination;
     }
