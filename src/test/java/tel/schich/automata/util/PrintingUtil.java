@@ -22,7 +22,10 @@
  */
 package tel.schich.automata.util;
 
+import java.util.Set;
+
 import tel.schich.automata.FiniteAutomate;
+import tel.schich.automata.State;
 import tel.schich.automata.transition.Transition;
 
 public abstract class PrintingUtil
@@ -38,5 +41,40 @@ public abstract class PrintingUtil
         System.out.println("Accepting:   " + a.getAcceptingStates());
         System.out.println("Start:       " + a.getStartState());
         System.out.println();
+    }
+
+    public static void automatonToDot(String name, FiniteAutomate<? extends Transition> a)
+    {
+        StringBuilder out = new StringBuilder(
+                "digraph {\n"
+                + "\trankdir=LR;\n");
+
+        out.append("\tlabel=\"").append(name).append("\"\n");
+        out.append("\tinit [style=invis;width=0.1;height=0.1;margin=0.1];\n\n");
+
+        Set<State> accepting = a.getAcceptingStates();
+        for (State s : a.getStates()) {
+            out.append("\t\"").append(s.getLabel()).append("\" [shape=");
+            if (accepting.contains(s)) {
+                out.append("doublecircle");
+            } else {
+                out.append("circle");
+            }
+            out.append("];\n");
+        }
+        out.append('\n');
+        out.append("\tinit->\"").append(a.getStartState().getLabel()).append("\";\n");
+
+        for (Transition t : a.getTransitions()) {
+            out.append("\t");
+            out.append('"').append(t.getOrigin().getLabel()).append("\"->\"").append(t.getDestination().getLabel()).append('"');
+            out.append(" [label=\"");
+            out.append(t.getLabel());
+            out.append("\"];\n");
+        }
+
+        out.append("}\n");
+
+        System.out.println(out);
     }
 }
