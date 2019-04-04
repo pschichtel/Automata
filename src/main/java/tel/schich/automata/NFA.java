@@ -22,7 +22,6 @@
  */
 package tel.schich.automata;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -38,6 +37,7 @@ import tel.schich.automata.transition.WildcardTransition;
 import tel.schich.automata.util.OrderedPair;
 import tel.schich.automata.util.Pair;
 
+import static java.util.Collections.emptySet;
 import static tel.schich.automata.util.Util.asSet;
 import static tel.schich.automata.util.Util.fixPointIterate;
 
@@ -51,7 +51,7 @@ public class NFA extends FiniteAutomate<Transition>
         State a = new State();
         State b = new State();
         EPSILON = new NFA(asSet(a, b), asSet(new SpontaneousTransition(a, b)), a, asSet(b));
-        EMPTY = new NFA(asSet(a, b), Collections.emptySet(), a, asSet(b));
+        EMPTY = new NFA(asSet(a), emptySet(), a, emptySet());
     }
 
     public Set<State> getStartStates()
@@ -84,7 +84,7 @@ public class NFA extends FiniteAutomate<Transition>
         TransitionMultiMap lookup = this.transitionLookup.get(s);
         if (lookup == null)
         {
-            return Collections.emptySet();
+            return emptySet();
         }
         return lookup.getSpontaneousTransitions();
     }
@@ -94,7 +94,7 @@ public class NFA extends FiniteAutomate<Transition>
         TransitionMultiMap lookup = this.transitionLookup.get(s);
         if (lookup == null)
         {
-            return Collections.emptySet();
+            return emptySet();
         }
         return lookup.getTransitionsFor(c);
     }
@@ -104,7 +104,7 @@ public class NFA extends FiniteAutomate<Transition>
         TransitionMultiMap lookup = this.transitionLookup.get(s);
         if (lookup == null)
         {
-            return Collections.emptySet();
+            return emptySet();
         }
         return lookup.getAlphabet();
     }
@@ -194,7 +194,7 @@ public class NFA extends FiniteAutomate<Transition>
             {
                 continue;
             }
-            for (final ExpectedTransition transition : map.getTransitionsFor(c, Collections.emptySet()))
+            for (final ExpectedTransition transition : map.getTransitionsFor(c, emptySet()))
             {
                 out.add(transition.getDestination());
             }
