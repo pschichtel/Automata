@@ -32,6 +32,12 @@ public class NamedState extends State
     }
 
     @Override
+    public String getLabel()
+    {
+        return name;
+    }
+
+    @Override
     public String toString()
     {
         return this.name;

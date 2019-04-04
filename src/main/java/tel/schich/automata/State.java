@@ -40,6 +40,16 @@ public class State
         return a.getByWildcard(this);
     }
 
+    public int getId()
+    {
+        return id;
+    }
+
+    public String getLabel()
+    {
+        return "" + id;
+    }
+
     @Override
     public boolean equals(Object o)
     {
