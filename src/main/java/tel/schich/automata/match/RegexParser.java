@@ -50,7 +50,7 @@ public abstract class RegexParser
 
     private static NFA readExpression(CharacterStream stream, int depth)
     {
-        LinkedList<FiniteAutomate<? extends Transition>> elements = new LinkedList<FiniteAutomate<? extends Transition>>();
+        LinkedList<FiniteAutomate<? extends Transition>> elements = new LinkedList<>();
 
         for (final char c : stream)
         {

@@ -34,7 +34,7 @@ public abstract class Util
     {
     }
 
-
+    @SafeVarargs
     public static <T> Set<T> asSet(T... elements)
     {
         return new HashSet<>(Arrays.asList(elements));
@@ -42,7 +42,7 @@ public abstract class Util
 
     public static <L, R> Set<OrderedPair<L, R>> orderedMultiply(Set<L> left, Set<R> right)
     {
-        Set<OrderedPair<L, R>> out = new HashSet<OrderedPair<L, R>>();
+        Set<OrderedPair<L, R>> out = new HashSet<>();
 
         for (L l : left)
         {

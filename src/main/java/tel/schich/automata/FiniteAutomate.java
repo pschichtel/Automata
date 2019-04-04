@@ -102,7 +102,7 @@ public abstract class FiniteAutomate<T extends Transition>
 
     public Set<Character> getExplicitAlphabet()
     {
-        Set<Character> chars = new HashSet<Character>();
+        Set<Character> chars = new HashSet<>();
 
         for (Transition transition : transitions)
         {
@@ -115,7 +115,6 @@ public abstract class FiniteAutomate<T extends Transition>
         return chars;
     }
 
-    @SuppressWarnings("unchecked")
     public NFA and(FiniteAutomate<? extends Transition> other)
     {
         final Set<State> states = mergeStates(this, other);
@@ -129,7 +128,6 @@ public abstract class FiniteAutomate<T extends Transition>
         return new NFA(states, transitions, this.getStartState(), other.getAcceptingStates());
     }
 
-    @SuppressWarnings("unchecked")
     public NFA or(FiniteAutomate<? extends Transition> other)
     {
         final Set<State> states = mergeStates(this, other);
@@ -156,8 +154,8 @@ public abstract class FiniteAutomate<T extends Transition>
 
     public NFA kleenePlus()
     {
-        final Set<State> states = new HashSet<State>(getStates());
-        final Set<Transition> transitions = new HashSet<Transition>(getTransitions());
+        final Set<State> states = new HashSet<>(getStates());
+        final Set<Transition> transitions = new HashSet<>(getTransitions());
 
         final State start = new State();
         final State accept = new State();
@@ -255,7 +253,7 @@ public abstract class FiniteAutomate<T extends Transition>
         }
         DFA self = toDFA();
         final Set<State> states = new HashSet<>(self.getReachableStates());
-        final Set<ExpectedTransition> transitions = new CopyOnWriteArraySet<ExpectedTransition>(self.getTransitions());
+        final Set<ExpectedTransition> transitions = new CopyOnWriteArraySet<>(self.getTransitions());
         State start = self.getStartState();
         final Set<State> accepting = new HashSet<>(self.getAcceptingStates());
 
@@ -268,12 +266,12 @@ public abstract class FiniteAutomate<T extends Transition>
                 // number of iterations can be halved by removing iterated P's from Q in P >< Q
                 if (p != q)
                 {
-                    statePairs.add(new UnorderedPair<State, State>(p, q));
+                    statePairs.add(new UnorderedPair<>(p, q));
                 }
             }
         }
 
-        Set<UnorderedPair<State, State>> separableStates = new HashSet<UnorderedPair<State, State>>();
+        Set<UnorderedPair<State, State>> separableStates = new HashSet<>();
         for (UnorderedPair<State, State> p : statePairs)
         {
             // separable if either left or right is accepting
@@ -302,7 +300,7 @@ public abstract class FiniteAutomate<T extends Transition>
                     {
                         continue;
                     }
-                    if (separableStates.contains(new UnorderedPair<State, State>(p, q)) && !separableStates.contains(
+                    if (separableStates.contains(new UnorderedPair<>(p, q)) && !separableStates.contains(
                         pair))
                     {
                         separableStates.add(pair);
@@ -317,7 +315,7 @@ public abstract class FiniteAutomate<T extends Transition>
                 {
                     continue;
                 }
-                if (separableStates.contains(new UnorderedPair<State, State>(p, q)) && !separableStates.contains(pair))
+                if (separableStates.contains(new UnorderedPair<>(p, q)) && !separableStates.contains(pair))
                 {
                     separableStates.add(pair);
                     changed = true;
@@ -437,9 +435,10 @@ public abstract class FiniteAutomate<T extends Transition>
         return result;
     }
 
+    @SafeVarargs
     protected static Set<State> mergeStates(FiniteAutomate<? extends Transition>... automates)
     {
-        Set<State> states = new HashSet<State>();
+        Set<State> states = new HashSet<>();
         for (FiniteAutomate<? extends Transition> automate : automates)
         {
             states.addAll(automate.getStates());
@@ -447,9 +446,10 @@ public abstract class FiniteAutomate<T extends Transition>
         return states;
     }
 
+    @SafeVarargs
     protected static Set<Transition> mergeTransitions(FiniteAutomate<? extends Transition>... automates)
     {
-        Set<Transition> transitions = new HashSet<Transition>();
+        Set<Transition> transitions = new HashSet<>();
         for (FiniteAutomate<? extends Transition> automate : automates)
         {
             transitions.addAll(automate.getTransitions());
@@ -459,15 +459,10 @@ public abstract class FiniteAutomate<T extends Transition>
 
     public static <T extends Transition> Map<State, Set<T>> groupByState(Set<T> transitions)
     {
-        Map<State, Set<T>> stateTransitions = new HashMap<State, Set<T>>();
+        Map<State, Set<T>> stateTransitions = new HashMap<>();
         for (T transition : transitions)
         {
-            Set<T> t = stateTransitions.get(transition.getOrigin());
-            if (t == null)
-            {
-                t = new HashSet<T>();
-                stateTransitions.put(transition.getOrigin(), t);
-            }
+            Set<T> t = stateTransitions.computeIfAbsent(transition.getOrigin(), k -> new HashSet<>());
             t.add(transition);
         }
         return stateTransitions;

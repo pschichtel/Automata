@@ -22,7 +22,6 @@
  */
 package tel.schich.automata;
 
-import tel.schich.automata.util.Util;
 import tel.schich.automata.match.Matcher;
 import tel.schich.automata.transition.CharacterTransition;
 import tel.schich.automata.transition.SpontaneousTransition;
@@ -35,6 +34,7 @@ import org.junit.Test;
 import java.util.Set;
 
 import static tel.schich.automata.util.PrintingUtil.printAutomoton;
+import static tel.schich.automata.util.Util.asSet;
 
 public class NFATest
 {
@@ -42,7 +42,7 @@ public class NFATest
     private NFA stroetiExample44;
 
     @Before
-    public void setUp() throws Exception
+    public void setUp()
     {
         State q0 = new NamedState("q0");
         State q1 = new NamedState("q1");
@@ -53,8 +53,8 @@ public class NFATest
         State q6 = new NamedState("q6");
         State q7 = new NamedState("q7");
 
-        Set<State> states = Util.asSet(q0, q1, q2, q3, q4, q5, q6, q7);
-        Set<Transition> transitions = Util.asSet(
+        Set<State> states = asSet(q0, q1, q2, q3, q4, q5, q6, q7);
+        Set<Transition> transitions = asSet(
                 new SpontaneousTransition(q0, q1),
                 new SpontaneousTransition(q0, q2),
                 new CharacterTransition(q1, 'b', q3),
@@ -66,10 +66,10 @@ public class NFATest
                 new SpontaneousTransition(q7, q0)
         );
 
-        this.stroetiExample44 = new NFA(states, transitions, q0, Util.asSet(q7));
+        this.stroetiExample44 = new NFA(states, transitions, q0, asSet(q7));
 
-        states = Util.asSet(q0, q1, q2, q3);
-        transitions = Util.<Transition>asSet(
+        states = asSet(q0, q1, q2, q3);
+        transitions = asSet(
                 new CharacterTransition(q0, 'a', q0),
                 new CharacterTransition(q0, 'b', q0),
                 new CharacterTransition(q0, 'b', q1),
@@ -79,34 +79,34 @@ public class NFATest
                 new CharacterTransition(q2, 'b', q3)
         );
 
-        this.stroetiExample43 = new NFA(states, transitions, q0, Util.asSet(q3));
+        this.stroetiExample43 = new NFA(states, transitions, q0, asSet(q3));
     }
 
     @Test
-    public void testClosure44() throws Exception
+    public void testClosure44()
     {
         PrintingUtil.printAutomoton("Stroeti NFA example 4.4", stroetiExample44);
 
         for (State state : stroetiExample44.getStates())
         {
-            System.out.println("ec(" + state + ") = " + stroetiExample44.epsilonClosure(Util.asSet(state)));
+            System.out.println("ec(" + state + ") = " + stroetiExample44.epsilonClosure(asSet(state)));
         }
     }
 
     @Test
-    public void testToDFA() throws Exception
+    public void testToDFA()
     {
         PrintingUtil.printAutomoton("toDFA", stroetiExample44.toDFA());
     }
 
     @Test
-    public void testToDFA2() throws Exception
+    public void testToDFA2()
     {
         PrintingUtil.printAutomoton("toDFA", stroetiExample43.toDFA());
     }
 
     @Test
-    public void testWithWildcardToDFA() throws Exception
+    public void testWithWildcardToDFA()
     {
         printAutomoton("wildcard match", Matcher.matchWildcard());
         final NFA a = Matcher.matchWildcard().and(Matcher.matchWildcard());

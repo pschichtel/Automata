@@ -29,7 +29,7 @@ import tel.schich.automata.input.CharBuffer.Checkpoint;
 public final class CharacterStream implements Iterator<Character>, Iterable<Character>
 {
     private final InputSource source;
-    private CharBuffer buffer = new CharBuffer();
+    private final CharBuffer buffer = new CharBuffer();
 
     public CharacterStream(InputSource source)
     {
@@ -135,13 +135,12 @@ public final class CharacterStream implements Iterator<Character>, Iterable<Char
         advance();
     }
 
-    public CharacterStream advance()
+    public void advance()
     {
         if (hasNext())
         {
             buffer.advance();
         }
-        return this;
     }
 
     public boolean isUninitialized()

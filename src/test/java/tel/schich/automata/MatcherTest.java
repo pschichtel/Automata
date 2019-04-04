@@ -32,7 +32,7 @@ public class MatcherTest
 {
 
     @Test
-    public void testRead() throws Exception
+    public void testRead()
     {
         DFA a = Matcher.matchAll('a');
 
@@ -40,7 +40,7 @@ public class MatcherTest
     }
 
     @Test
-    public void testAnd() throws Exception
+    public void testAnd()
     {
         DFA a = Matcher.matchAll('a');
         DFA b = Matcher.matchAll('b');
@@ -50,7 +50,7 @@ public class MatcherTest
     }
 
     @Test
-    public void testOr() throws Exception
+    public void testOr()
     {
         DFA a = Matcher.matchAll('a');
         DFA b = Matcher.matchAll('b');
@@ -60,7 +60,7 @@ public class MatcherTest
     }
 
     @Test
-    public void testKleene() throws Exception
+    public void testKleene()
     {
         DFA a = Matcher.matchAll('a');
 
@@ -69,7 +69,7 @@ public class MatcherTest
     }
 
     @Test
-    public void testPattern() throws Exception
+    public void testPattern()
     {
         Pattern p = Pattern.compile("[ab]*");
         System.out.println("Pattern.toString(): " + p.toString());

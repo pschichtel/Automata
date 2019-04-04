@@ -31,6 +31,7 @@ import tel.schich.automata.transition.Transition;
 
 public class Evaluator
 {
+    @SafeVarargs
     public static StateMachineEvaluator eval(FiniteAutomate<? extends Transition>... automates)
     {
         if (automates.length == 0)

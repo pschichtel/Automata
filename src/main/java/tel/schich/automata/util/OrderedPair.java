@@ -22,6 +22,8 @@
  */
 package tel.schich.automata.util;
 
+import java.util.Objects;
+
 public class OrderedPair<L, R> implements Pair<L, R>
 {
     private final L left;
@@ -59,11 +61,11 @@ public class OrderedPair<L, R> implements Pair<L, R>
 
         OrderedPair that = (OrderedPair)o;
 
-        if (left != null ? !left.equals(that.left) : that.left != null)
+        if (!Objects.equals(left, that.left))
         {
             return false;
         }
-        if (right != null ? !right.equals(that.right) : that.right != null)
+        if (!Objects.equals(right, that.right))
         {
             return false;
         }

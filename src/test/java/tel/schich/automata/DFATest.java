@@ -24,7 +24,6 @@ package tel.schich.automata;
 
 import tel.schich.automata.match.PatternParser;
 import tel.schich.automata.match.RegexParser;
-import tel.schich.automata.util.Util;
 import tel.schich.automata.eval.Evaluator;
 import tel.schich.automata.eval.StateMachineEvaluator;
 import tel.schich.automata.match.Matcher;
@@ -50,7 +49,7 @@ import static tel.schich.automata.util.Util.asSet;
 public class DFATest
 {
     @Test
-    public void testGetBy() throws Exception
+    public void testGetBy()
     {
         String string = "Test123";
         String string2 = "super";
@@ -76,7 +75,7 @@ public class DFATest
     }
 
     @Test
-    public void testMinimize() throws Exception
+    public void testMinimize()
     {
         State q0 = new NamedState("q0");
         State q1 = new NamedState("q1");
@@ -88,7 +87,7 @@ public class DFATest
         State q7 = new NamedState("q7");
 
         Set<State> states = asSet(q0, q1, q2, q3, q4, q5, q6, q7);
-        Set<ExpectedTransition> transitions = Util.<ExpectedTransition>asSet(
+        Set<ExpectedTransition> transitions = asSet(
                 new CharacterTransition(q0, 'a', q1),
                 new CharacterTransition(q0, 'b', q2),
                 new CharacterTransition(q1, 'a', q3),
@@ -115,7 +114,7 @@ public class DFATest
     }
 
     @Test
-    public void testComplete() throws Exception
+    public void testComplete()
     {
         final State s1 = new State();
         final State s2 = new State();
@@ -136,7 +135,7 @@ public class DFATest
     }
 
     @Test
-    public void testComplement() throws Exception
+    public void testComplement()
     {
         final State s1 = new State();
         final State s2 = new State();
@@ -168,14 +167,14 @@ public class DFATest
     }
 
     @Test
-    public void testMinimizeWithWildcard() throws Exception
+    public void testMinimizeWithWildcard()
     {
         State s0 = new State();
         State s1 = new State();
         State s2 = new State();
         final Set<State> states = asSet(s0, s1, s2);
 
-        Set<ExpectedTransition> transitions = new HashSet<ExpectedTransition>();
+        Set<ExpectedTransition> transitions = new HashSet<>();
         transitions.add(new WildcardTransition(s0, s1));
         transitions.add(new WildcardTransition(s1, s2));
         transitions.add(new WildcardTransition(s2, s0));
@@ -188,7 +187,7 @@ public class DFATest
     }
 
     @Test
-    public void testMinimizeSimple() throws Exception
+    public void testMinimizeSimple()
     {
         State s0 = new State();
         State s1 = new State();
@@ -196,7 +195,7 @@ public class DFATest
         State s3 = new State();
         final Set<State> states = asSet(s0, s1, s2, s3);
 
-        Set<ExpectedTransition> transitions = new HashSet<ExpectedTransition>();
+        Set<ExpectedTransition> transitions = new HashSet<>();
         transitions.add(new CharacterTransition(s0, 'a', s1));
         transitions.add(new CharacterTransition(s1, 'a', s2));
         transitions.add(new CharacterTransition(s2, 'a', s3));
@@ -210,7 +209,7 @@ public class DFATest
     }
 
     @Test
-    public void testCombine() throws Exception
+    public void testCombine()
     {
         State _1 = new NamedState("1");
         State _2 = new NamedState("2");
@@ -219,10 +218,10 @@ public class DFATest
         State C = new NamedState("C");
 
         DFA a1 = new DFA(asSet(_1, _2), asSet(new CharacterTransition(_1, 'a', _2)), _1, asSet(_2));
-        DFA a2 = new DFA(asSet(A, B, C), Util.<ExpectedTransition>asSet(
+        DFA a2 = new DFA(asSet(A, B, C), asSet(
             new CharacterTransition(A, 'b', B),
             new CharacterTransition(B, 'b', C)
-                                                                       ), A, asSet(C));
+        ), A, asSet(C));
 
         PrintingUtil.printAutomoton("a1", a1);
         PrintingUtil.printAutomoton("a2", a2);
@@ -278,7 +277,7 @@ public class DFATest
     }
 
     @Test
-    public void testCombineWithWildcard() throws Exception
+    public void testCombineWithWildcard()
     {
         State _1 = new NamedState("1");
         State _2 = new NamedState("2");
@@ -359,7 +358,7 @@ public class DFATest
     }
 
     @Test
-    public void testEquivalence() throws Exception
+    public void testEquivalence()
     {
         DFA a = RegexParser.toDFA("a");
         DFA b = RegexParser.toDFA("a");
@@ -378,7 +377,7 @@ public class DFATest
     }
 
     @Test
-    public void testIntersection() throws Exception
+    public void testIntersection()
     {
         DFA first = PatternParser.toDFA("a*b*c*d*");
         DFA seconds = PatternParser.toDFA("d*c*b*a*");
