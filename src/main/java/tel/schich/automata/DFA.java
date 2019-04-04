@@ -22,7 +22,6 @@
  */
 package tel.schich.automata;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -37,6 +36,7 @@ import tel.schich.automata.transition.WildcardTransition;
 import tel.schich.automata.util.OrderedPair;
 import tel.schich.automata.util.Pair;
 
+import static java.util.Collections.emptySet;
 import static tel.schich.automata.util.Util.asSet;
 
 public class DFA extends FiniteAutomate<ExpectedTransition>
@@ -46,8 +46,7 @@ public class DFA extends FiniteAutomate<ExpectedTransition>
     static
     {
         State a = new State();
-        State b = new State();
-        EMPTY = new DFA(asSet(a, b), Collections.emptySet(), a, asSet(b));
+        EMPTY = new DFA(asSet(a), asSet(new WildcardTransition(a, a)), a, emptySet());
     }
 
     private final Map<State, TransitionMap> transitionLookup;
