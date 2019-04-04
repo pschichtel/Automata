@@ -45,6 +45,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+import static tel.schich.automata.util.Util.asSet;
 
 public class DFATest
 {
@@ -86,7 +87,7 @@ public class DFATest
         State q6 = new NamedState("q6");
         State q7 = new NamedState("q7");
 
-        Set<State> states = Util.asSet(q0, q1, q2, q3, q4, q5, q6, q7);
+        Set<State> states = asSet(q0, q1, q2, q3, q4, q5, q6, q7);
         Set<ExpectedTransition> transitions = Util.<ExpectedTransition>asSet(
                 new CharacterTransition(q0, 'a', q1),
                 new CharacterTransition(q0, 'b', q2),
@@ -102,7 +103,7 @@ public class DFATest
                 new CharacterTransition(q6, 'd', q7)
         );
 
-        DFA stroeti51 = new DFA(states, transitions, q0, Util.asSet(q3, q4));
+        DFA stroeti51 = new DFA(states, transitions, q0, asSet(q3, q4));
 
         PrintingUtil.printAutomoton("not minimized", stroeti51);
 
@@ -122,7 +123,7 @@ public class DFATest
 
         final ExpectedTransition t = new CharacterTransition(s1, acceptedChar, s2);
 
-        final DFA a = new DFA(Util.asSet(s1, s2), Util.asSet(t), s1, Util.asSet(s2));
+        final DFA a = new DFA(asSet(s1, s2), asSet(t), s1, asSet(s2));
         assertFalse("a should not be complete", a.isComplete());
 
         final DFA completeA = a.complete();
@@ -144,7 +145,7 @@ public class DFATest
 
         final ExpectedTransition t = new CharacterTransition(s1, acceptedChar, s2);
 
-        final DFA a = new DFA(Util.asSet(s1, s2), Util.asSet(t), s1, Util.asSet(s2));
+        final DFA a = new DFA(asSet(s1, s2), asSet(t), s1, asSet(s2));
         final DFA aComplement = a.complement();
         final DFA aAgain = aComplement.complement();
 
@@ -172,7 +173,7 @@ public class DFATest
         State s0 = new State();
         State s1 = new State();
         State s2 = new State();
-        final Set<State> states = Util.asSet(s0, s1, s2);
+        final Set<State> states = asSet(s0, s1, s2);
 
         Set<ExpectedTransition> transitions = new HashSet<ExpectedTransition>();
         transitions.add(new WildcardTransition(s0, s1));
@@ -193,7 +194,7 @@ public class DFATest
         State s1 = new State();
         State s2 = new State();
         State s3 = new State();
-        final Set<State> states = Util.asSet(s0, s1, s2, s3);
+        final Set<State> states = asSet(s0, s1, s2, s3);
 
         Set<ExpectedTransition> transitions = new HashSet<ExpectedTransition>();
         transitions.add(new CharacterTransition(s0, 'a', s1));
@@ -217,40 +218,41 @@ public class DFATest
         State B = new NamedState("B");
         State C = new NamedState("C");
 
-        DFA a1 = new DFA(Util.asSet(_1, _2), Util.<ExpectedTransition>asSet(new CharacterTransition(_1, 'a', _2)), _1, Util
-                .asSet(_2));
-        DFA a2 = new DFA(Util.asSet(A, B, C), Util.<ExpectedTransition>asSet(
+        DFA a1 = new DFA(asSet(_1, _2), asSet(new CharacterTransition(_1, 'a', _2)), _1, asSet(_2));
+        DFA a2 = new DFA(asSet(A, B, C), Util.<ExpectedTransition>asSet(
             new CharacterTransition(A, 'b', B),
             new CharacterTransition(B, 'b', C)
-                                                                       ), A, Util.asSet(C));
+                                                                       ), A, asSet(C));
 
         PrintingUtil.printAutomoton("a1", a1);
         PrintingUtil.printAutomoton("a2", a2);
 
+
         final DFA union = a1.union(a2);
         PrintingUtil.printAutomoton("a1 union a2", union);
-        assertFalse("union: b", matchAgainstString(union, "b"));
-        assertTrue("union: ba", matchAgainstString(union, "ba"));
+        PrintingUtil.automatonToDot("a1 union a2", union);
+        assertTrue("union: a", matchAgainstString(union, "a"));
         assertTrue("union: bb", matchAgainstString(union, "bb"));
-        assertTrue("union: abb", matchAgainstString(union, "abb"));
-        assertTrue("union: bba", matchAgainstString(union, "bba"));
-        assertTrue("union: bab", matchAgainstString(union, "bab"));
+        assertFalse("union: b", matchAgainstString(union, "b"));
+        assertFalse("union: ba", matchAgainstString(union, "ba"));
+        assertFalse("union: abb", matchAgainstString(union, "abb"));
+        assertFalse("union: bba", matchAgainstString(union, "bba"));
+        assertFalse("union: bab", matchAgainstString(union, "bab"));
         assertFalse("union: baa", matchAgainstString(union, "baa"));
         assertFalse("union: aab", matchAgainstString(union, "aab"));
         assertFalse("union: aba", matchAgainstString(union, "aba"));
         assertFalse("union: aa", matchAgainstString(union, "aa"));
-        assertTrue("union: ab", matchAgainstString(union, "ab"));
-        assertTrue("union: a", matchAgainstString(union, "a"));
+        assertFalse("union: ab", matchAgainstString(union, "ab"));
 
 
         final DFA intersection = a1.intersectWith(a2);
         PrintingUtil.printAutomoton("a1 intersected by a2", intersection);
+        assertFalse("intersection: abb", matchAgainstString(intersection, "abb"));
+        assertFalse("intersection: bba", matchAgainstString(intersection, "bba"));
+        assertFalse("intersection: bab", matchAgainstString(intersection, "bab"));
+        assertFalse("intersection: bb", matchAgainstString(intersection, "bb"));
         assertFalse("intersection: b", matchAgainstString(intersection, "b"));
         assertFalse("intersection: ba", matchAgainstString(intersection, "ba"));
-        assertFalse("intersection: bb", matchAgainstString(intersection, "bb"));
-        assertTrue("intersection: abb", matchAgainstString(intersection, "abb"));
-        assertTrue("intersection: bba", matchAgainstString(intersection, "bba"));
-        assertTrue("intersection: bab", matchAgainstString(intersection, "bab"));
         assertFalse("intersection: baa", matchAgainstString(intersection, "baa"));
         assertFalse("intersection: aab", matchAgainstString(intersection, "aab"));
         assertFalse("intersection: aba", matchAgainstString(intersection, "aba"));
@@ -261,9 +263,11 @@ public class DFATest
 
         final DFA difference = a1.without(a2);
         PrintingUtil.printAutomoton("a1 without a2", difference);
-        assertFalse("difference: b", matchAgainstString(difference, "b"));
-        assertTrue("difference: ba", matchAgainstString(difference, "ba"));
+        assertTrue("difference: a", matchAgainstString(difference, "a"));
+        assertFalse("difference: ab", matchAgainstString(difference, "ab"));
+        assertFalse("difference: ba", matchAgainstString(difference, "ba"));
         assertFalse("difference: bb", matchAgainstString(difference, "bb"));
+        assertFalse("difference: b", matchAgainstString(difference, "b"));
         assertFalse("difference: abb", matchAgainstString(difference, "abb"));
         assertFalse("difference: bba", matchAgainstString(difference, "bba"));
         assertFalse("difference: bab", matchAgainstString(difference, "bab"));
@@ -271,8 +275,6 @@ public class DFATest
         assertFalse("difference: aab", matchAgainstString(difference, "aab"));
         assertFalse("difference: aba", matchAgainstString(difference, "aba"));
         assertFalse("difference: aa", matchAgainstString(difference, "aa"));
-        assertTrue("difference: ab", matchAgainstString(difference, "ab"));
-        assertTrue("difference: a", matchAgainstString(difference, "a"));
     }
 
     @Test
@@ -284,12 +286,11 @@ public class DFATest
         State B = new NamedState("B");
         State C = new NamedState("C");
 
-        DFA a1 = new DFA(Util.asSet(_1, _2), Util.<ExpectedTransition>asSet(new CharacterTransition(_1, 'a', _2)), _1, Util
-                .asSet(_2));
-        DFA a2 = new DFA(Util.asSet(A, B, C), Util.<ExpectedTransition>asSet(
+        DFA a1 = new DFA(asSet(_1, _2), asSet(new CharacterTransition(_1, 'a', _2)), _1, asSet(_2));
+        DFA a2 = new DFA(asSet(A, B, C), asSet(
             new WildcardTransition(A, B),
             new WildcardTransition(B, C)
-        ), A, Util.asSet(C));
+        ), A, asSet(C));
 
         PrintingUtil.printAutomoton("a1", a1);
         PrintingUtil.printAutomoton("a2", a2);
@@ -299,28 +300,29 @@ public class DFATest
         assertFalse("union: b", matchAgainstString(union, "b"));
         assertTrue("union: ba", matchAgainstString(union, "ba"));
         assertTrue("union: bb", matchAgainstString(union, "bb"));
-        assertTrue("union: abb", matchAgainstString(union, "abb"));
-        assertTrue("union: bba", matchAgainstString(union, "bba"));
-        assertTrue("union: bab", matchAgainstString(union, "bab"));
-        assertTrue("union: baa", matchAgainstString(union, "baa"));
-        assertTrue("union: aab", matchAgainstString(union, "aab"));
-        assertTrue("union: aba", matchAgainstString(union, "aba"));
+        assertFalse("union: abb", matchAgainstString(union, "abb"));
+        assertFalse("union: bba", matchAgainstString(union, "bba"));
+        assertFalse("union: bab", matchAgainstString(union, "bab"));
+        assertFalse("union: baa", matchAgainstString(union, "baa"));
+        assertFalse("union: aab", matchAgainstString(union, "aab"));
+        assertFalse("union: aba", matchAgainstString(union, "aba"));
         assertTrue("union: aa", matchAgainstString(union, "aa"));
         assertTrue("union: ab", matchAgainstString(union, "ab"));
         assertTrue("union: a", matchAgainstString(union, "a"));
 
 
         final DFA intersection = a1.intersectWith(a2);
-        PrintingUtil.printAutomoton("a1 intersected by a2", intersection);
+        PrintingUtil.automatonToDot("a1 intersected by a2", intersection);
+        assertTrue(intersection.isEmpty());
         assertFalse("intersection: b", matchAgainstString(intersection, "b"));
         assertFalse("intersection: ba", matchAgainstString(intersection, "ba"));
         assertFalse("intersection: bb", matchAgainstString(intersection, "bb"));
-        assertTrue("intersection: abb", matchAgainstString(intersection, "abb"));
-        assertTrue("intersection: bba", matchAgainstString(intersection, "bba"));
-        assertTrue("intersection: bab", matchAgainstString(intersection, "bab"));
-        assertTrue("intersection: baa", matchAgainstString(intersection, "baa"));
-        assertTrue("intersection: aab", matchAgainstString(intersection, "aab"));
-        assertTrue("intersection: aba", matchAgainstString(intersection, "aba"));
+        assertFalse("intersection: abb", matchAgainstString(intersection, "abb"));
+        assertFalse("intersection: bba", matchAgainstString(intersection, "bba"));
+        assertFalse("intersection: bab", matchAgainstString(intersection, "bab"));
+        assertFalse("intersection: baa", matchAgainstString(intersection, "baa"));
+        assertFalse("intersection: aab", matchAgainstString(intersection, "aab"));
+        assertFalse("intersection: aba", matchAgainstString(intersection, "aba"));
         assertFalse("intersection: aa", matchAgainstString(intersection, "aa"));
         assertFalse("intersection: ab", matchAgainstString(intersection, "ab"));
         assertFalse("intersection: a", matchAgainstString(intersection, "a"));
@@ -328,8 +330,9 @@ public class DFATest
 
         final DFA difference = a1.without(a2);
         PrintingUtil.printAutomoton("a1 without a2", difference);
+        assertTrue("difference: a", matchAgainstString(difference, "a"));
         assertFalse("difference: b", matchAgainstString(difference, "b"));
-        assertTrue("difference: ba", matchAgainstString(difference, "ba"));
+        assertFalse("difference: ba", matchAgainstString(difference, "ba"));
         assertFalse("difference: bb", matchAgainstString(difference, "bb"));
         assertFalse("difference: abb", matchAgainstString(difference, "abb"));
         assertFalse("difference: bba", matchAgainstString(difference, "bba"));
@@ -337,9 +340,8 @@ public class DFATest
         assertFalse("difference: baa", matchAgainstString(difference, "baa"));
         assertFalse("difference: aab", matchAgainstString(difference, "aab"));
         assertFalse("difference: aba", matchAgainstString(difference, "aba"));
-        assertTrue("difference: aa", matchAgainstString(difference, "aa"));
-        assertTrue("difference: ab", matchAgainstString(difference, "ab"));
-        assertTrue("difference: a", matchAgainstString(difference, "a"));
+        assertFalse("difference: aa", matchAgainstString(difference, "aa"));
+        assertFalse("difference: ab", matchAgainstString(difference, "ab"));
     }
 
     private static boolean matchAgainstString(FiniteAutomate<? extends Transition> automate, String str)
