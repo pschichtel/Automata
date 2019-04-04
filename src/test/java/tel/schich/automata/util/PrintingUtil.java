@@ -33,7 +33,7 @@ public abstract class PrintingUtil
     private PrintingUtil()
     {}
 
-    public static void printAutomate(String name, FiniteAutomate<? extends Transition> a)
+    public static void printAutomoton(String name, FiniteAutomate<? extends Transition> a)
     {
         System.out.println(name + ":");
         System.out.println("States:      " + a.getStates());

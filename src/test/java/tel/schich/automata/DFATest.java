@@ -22,6 +22,7 @@
  */
 package tel.schich.automata;
 
+import tel.schich.automata.match.PatternParser;
 import tel.schich.automata.match.RegexParser;
 import tel.schich.automata.util.Util;
 import tel.schich.automata.eval.Evaluator;
@@ -103,10 +104,10 @@ public class DFATest
 
         DFA stroeti51 = new DFA(states, transitions, q0, Util.asSet(q3, q4));
 
-        PrintingUtil.printAutomate("not minimized", stroeti51);
+        PrintingUtil.printAutomoton("not minimized", stroeti51);
 
         DFA minimized = stroeti51.minimize();
-        PrintingUtil.printAutomate("minimized", minimized);
+        PrintingUtil.printAutomoton("minimized", minimized);
 
         assertThat("Start states not equal", minimized.getStartState(), is(stroeti51.getStartState()));
         assertThat("Unexpected number of states", minimized.getStates().size(), is(3));
@@ -147,9 +148,9 @@ public class DFATest
         final DFA aComplement = a.complement();
         final DFA aAgain = aComplement.complement();
 
-        PrintingUtil.printAutomate("base a", a);
-        PrintingUtil.printAutomate("complement a", aComplement);
-        PrintingUtil.printAutomate("complement complement a", aAgain);
+        PrintingUtil.printAutomoton("base a", a);
+        PrintingUtil.printAutomoton("complement a", aComplement);
+        PrintingUtil.printAutomoton("complement complement a", aAgain);
 
         assertEquals("accepted char was accepted by complement",
                 a.isAccepting(a.getStartState().transition(a, acceptedChar)),
@@ -181,8 +182,8 @@ public class DFATest
         DFA a = new DFA(states, transitions, s0, states);
         DFA aMin = a.minimize();
 
-        PrintingUtil.printAutomate("a unminimized", a);
-        PrintingUtil.printAutomate("a minimized", aMin);
+        PrintingUtil.printAutomoton("a unminimized", a);
+        PrintingUtil.printAutomoton("a minimized", aMin);
     }
 
     @Test
@@ -203,8 +204,8 @@ public class DFATest
         DFA a = new DFA(states, transitions, s0, states);
         DFA aMin = a.minimize();
 
-        PrintingUtil.printAutomate("a unminimized", a);
-        PrintingUtil.printAutomate("a minimized", aMin);
+        PrintingUtil.printAutomoton("a unminimized", a);
+        PrintingUtil.printAutomoton("a minimized", aMin);
     }
 
     @Test
@@ -223,11 +224,11 @@ public class DFATest
             new CharacterTransition(B, 'b', C)
                                                                        ), A, Util.asSet(C));
 
-        PrintingUtil.printAutomate("a1", a1);
-        PrintingUtil.printAutomate("a2", a2);
+        PrintingUtil.printAutomoton("a1", a1);
+        PrintingUtil.printAutomoton("a2", a2);
 
         final DFA union = a1.union(a2);
-        PrintingUtil.printAutomate("a1 union a2", union);
+        PrintingUtil.printAutomoton("a1 union a2", union);
         assertFalse("union: b", matchAgainstString(union, "b"));
         assertTrue("union: ba", matchAgainstString(union, "ba"));
         assertTrue("union: bb", matchAgainstString(union, "bb"));
@@ -243,7 +244,7 @@ public class DFATest
 
 
         final DFA intersection = a1.intersectWith(a2);
-        PrintingUtil.printAutomate("a1 intersected by a2", intersection);
+        PrintingUtil.printAutomoton("a1 intersected by a2", intersection);
         assertFalse("intersection: b", matchAgainstString(intersection, "b"));
         assertFalse("intersection: ba", matchAgainstString(intersection, "ba"));
         assertFalse("intersection: bb", matchAgainstString(intersection, "bb"));
@@ -259,7 +260,7 @@ public class DFATest
 
 
         final DFA difference = a1.without(a2);
-        PrintingUtil.printAutomate("a1 without a2", difference);
+        PrintingUtil.printAutomoton("a1 without a2", difference);
         assertFalse("difference: b", matchAgainstString(difference, "b"));
         assertTrue("difference: ba", matchAgainstString(difference, "ba"));
         assertFalse("difference: bb", matchAgainstString(difference, "bb"));
@@ -290,11 +291,11 @@ public class DFATest
             new WildcardTransition(B, C)
         ), A, Util.asSet(C));
 
-        PrintingUtil.printAutomate("a1", a1);
-        PrintingUtil.printAutomate("a2", a2);
+        PrintingUtil.printAutomoton("a1", a1);
+        PrintingUtil.printAutomoton("a2", a2);
 
         final DFA union = a1.union(a2);
-        PrintingUtil.printAutomate("a1 union a2", union);
+        PrintingUtil.printAutomoton("a1 union a2", union);
         assertFalse("union: b", matchAgainstString(union, "b"));
         assertTrue("union: ba", matchAgainstString(union, "ba"));
         assertTrue("union: bb", matchAgainstString(union, "bb"));
@@ -310,7 +311,7 @@ public class DFATest
 
 
         final DFA intersection = a1.intersectWith(a2);
-        PrintingUtil.printAutomate("a1 intersected by a2", intersection);
+        PrintingUtil.printAutomoton("a1 intersected by a2", intersection);
         assertFalse("intersection: b", matchAgainstString(intersection, "b"));
         assertFalse("intersection: ba", matchAgainstString(intersection, "ba"));
         assertFalse("intersection: bb", matchAgainstString(intersection, "bb"));
@@ -326,7 +327,7 @@ public class DFATest
 
 
         final DFA difference = a1.without(a2);
-        PrintingUtil.printAutomate("a1 without a2", difference);
+        PrintingUtil.printAutomoton("a1 without a2", difference);
         assertFalse("difference: b", matchAgainstString(difference, "b"));
         assertTrue("difference: ba", matchAgainstString(difference, "ba"));
         assertFalse("difference: bb", matchAgainstString(difference, "bb"));
@@ -369,8 +370,23 @@ public class DFATest
         DFA complexB = RegexParser.toDFA("a");
         DFA complexC = RegexParser.toDFA("c");
 
+
         assertFalse("complexA and complexB should be equivalent", complexA.isEquivalentTo(complexB));
         assertFalse("complexA and complexC should not be equivalent", complexA.isEquivalentTo(complexC));
+    }
 
+    @Test
+    public void testIntersection() throws Exception
+    {
+        DFA first = PatternParser.toDFA("a*b*c*d*");
+        DFA seconds = PatternParser.toDFA("d*c*b*a*");
+
+        PrintingUtil.automatonToDot("first", first);
+        PrintingUtil.automatonToDot("second", seconds);
+
+        DFA intersection = first.intersectWith(seconds);
+        PrintingUtil.automatonToDot("intersection", intersection.minimize());
+
+        assertFalse(intersection.isEmpty());
     }
 }

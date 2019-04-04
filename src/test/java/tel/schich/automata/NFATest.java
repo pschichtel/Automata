@@ -22,10 +22,6 @@
  */
 package tel.schich.automata;
 
-import tel.schich.automata.DFA;
-import tel.schich.automata.NFA;
-import tel.schich.automata.NamedState;
-import tel.schich.automata.State;
 import tel.schich.automata.util.Util;
 import tel.schich.automata.match.Matcher;
 import tel.schich.automata.transition.CharacterTransition;
@@ -38,7 +34,7 @@ import org.junit.Test;
 
 import java.util.Set;
 
-import static tel.schich.automata.util.PrintingUtil.printAutomate;
+import static tel.schich.automata.util.PrintingUtil.printAutomoton;
 
 public class NFATest
 {
@@ -89,7 +85,7 @@ public class NFATest
     @Test
     public void testClosure44() throws Exception
     {
-        PrintingUtil.printAutomate("Stroeti NFA example 4.4", stroetiExample44);
+        PrintingUtil.printAutomoton("Stroeti NFA example 4.4", stroetiExample44);
 
         for (State state : stroetiExample44.getStates())
         {
@@ -100,24 +96,24 @@ public class NFATest
     @Test
     public void testToDFA() throws Exception
     {
-        PrintingUtil.printAutomate("toDFA", stroetiExample44.toDFA());
+        PrintingUtil.printAutomoton("toDFA", stroetiExample44.toDFA());
     }
 
     @Test
     public void testToDFA2() throws Exception
     {
-        PrintingUtil.printAutomate("toDFA", stroetiExample43.toDFA());
+        PrintingUtil.printAutomoton("toDFA", stroetiExample43.toDFA());
     }
 
     @Test
     public void testWithWildcardToDFA() throws Exception
     {
-        printAutomate("wildcard match", Matcher.matchWildcard());
+        printAutomoton("wildcard match", Matcher.matchWildcard());
         final NFA a = Matcher.matchWildcard().and(Matcher.matchWildcard());
         //final NFA a = Matcher.matchAll('a').and(Matcher.matchAll('a'));
-        printAutomate("a", a);
+        printAutomoton("a", a);
         DFA dfa = a.toDFA();
-        printAutomate("a as DFA", dfa);
-        printAutomate("a as minimized DFA", dfa.minimize());
+        printAutomoton("a as DFA", dfa);
+        printAutomoton("a as minimized DFA", dfa.minimize());
     }
 }

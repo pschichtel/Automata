@@ -187,9 +187,9 @@ public class DFA extends FiniteAutomate<ExpectedTransition>
 
     public DFA combine(FiniteAutomate<? extends Transition> o, BiPredicate<Boolean, Boolean> shouldAccept)
     {
-        final DFA self = toDFA();
-        final DFA other = o.toDFA();
-        Map<Pair<State, State>, State> stateMap = new HashMap<>();
+        final DFA self = toDFA().complete();
+        final DFA other = o.toDFA().complete();
+        final Map<Pair<State, State>, State> stateMap = new HashMap<>();
         final Set<State> accepting = new HashSet<>();
 
         Set<Character> alphabet = new HashSet<>(self.getExplicitAlphabet());
@@ -199,7 +199,7 @@ public class DFA extends FiniteAutomate<ExpectedTransition>
         {
             for (final State otherState : other.getStates())
             {
-                final State newState = new State();
+                final State newState = new NamedState(selfState.getId() + "|" + otherState.getId());
                 stateMap.put(new OrderedPair<>(selfState, otherState), newState);
                 if (shouldAccept.test(self.isAccepting(selfState), other.isAccepting(otherState)))
                 {
@@ -219,55 +219,32 @@ public class DFA extends FiniteAutomate<ExpectedTransition>
             /// check against wildcard
             State aNext = a.transition(self);
             State bNext = b.transition(other);
-            if (aNext != ErrorState.ERROR || bNext != ErrorState.ERROR)
-            {
-                if (aNext == ErrorState.ERROR)
-                {
-                    aNext = a;
-                }
-                if (bNext == ErrorState.ERROR)
-                {
-                    bNext = b;
-                }
-                final State abNext = stateMap.get(new OrderedPair<>(aNext, bNext));
-                transitions.add(new WildcardTransition(ab, abNext));
-            }
+            transitions.add(new WildcardTransition(ab, stateMap.get(new OrderedPair<>(aNext, bNext))));
 
             // check against alphabet
             for (final char c : alphabet)
             {
-                aNext = self.transitionExplicit(a, c);
-                bNext = other.transitionExplicit(b, c);
-                if (aNext != ErrorState.ERROR || bNext != ErrorState.ERROR)
-                {
-                    if (aNext == ErrorState.ERROR)
-                    {
-                        aNext = a;
-                    }
-                    if (bNext == ErrorState.ERROR)
-                    {
-                        bNext = b;
-                    }
-                    final State abNext = stateMap.get(new OrderedPair<>(aNext, bNext));
+                aNext = a.transition(self, c);
+                bNext = b.transition(other, c);
+                final State abNext = stateMap.get(new OrderedPair<>(aNext, bNext));
 
-                    // if there is already a wildcard between these states, another explicit transition is useless
-                    boolean wildcardExisting = false;
-                    for (final ExpectedTransition transition : transitions)
+                // if there is already a wildcard between these states, another explicit transition is useless
+                boolean wildcardExisting = false;
+                for (final ExpectedTransition transition : transitions)
+                {
+                    if (transition instanceof WildcardTransition)
                     {
-                        if (transition instanceof WildcardTransition)
+                        WildcardTransition w = (WildcardTransition)transition;
+                        if (w.getOrigin() == ab && w.getDestination() == abNext)
                         {
-                            WildcardTransition w = (WildcardTransition)transition;
-                            if (w.getOrigin() == ab && w.getDestination() == abNext)
-                            {
-                                wildcardExisting = true;
-                                break;
-                            }
+                            wildcardExisting = true;
+                            break;
                         }
                     }
-                    if (!wildcardExisting)
-                    {
-                        transitions.add(new CharacterTransition(ab, c, abNext));
-                    }
+                }
+                if (!wildcardExisting)
+                {
+                    transitions.add(new CharacterTransition(ab, c, abNext));
                 }
             }
         }
