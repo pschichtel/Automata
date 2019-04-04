@@ -78,4 +78,9 @@ public class OrderedPair<L, R> implements Pair<L, R>
         result = 31 * result + (right != null ? right.hashCode() : 0);
         return result;
     }
+
+    @Override
+    public String toString() {
+        return "(" + left + ", " + right + ")";
+    }
 }
