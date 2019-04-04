@@ -25,6 +25,7 @@ package tel.schich.automata.match;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.Predicate;
 
 import tel.schich.automata.input.CharacterStream;
 import tel.schich.automata.DFA;
@@ -323,36 +324,17 @@ public abstract class PatternParser
 
     private enum NumberSyntax
     {
-        OCTAL(8)
-            {
-                @Override
-                boolean accept(char c)
-                {
-                    return c >= '0' && c <= '7';
-                }
-            },
-        DECIMAL(10)
-            {
-                @Override
-                boolean accept(char c)
-                {
-                    return c >= '0' && c <= '9';
-                }
-            },
-        HEXADECIMAL(16)
-            {
-                @Override
-                boolean accept(char c)
-                {
-                    return DECIMAL.accept(c) || c >= 'a' && c <= 'f' || c >= 'A' && c <= 'F';
-                }
-            };
+        OCTAL(8, c -> c >= '0' && c <= '7'),
+        DECIMAL(10, c -> c >= '0' && c <= '9'),
+        HEXADECIMAL(16, c -> DECIMAL.accept(c) || c >= 'a' && c <= 'f' || c >= 'A' && c <= 'F');
 
         private final int base;
+        private final Predicate<Character> accept;
 
-        NumberSyntax(int base)
+        NumberSyntax(int base, Predicate<Character> accept)
         {
             this.base = base;
+            this.accept = accept;
         }
 
         public int getBase()
@@ -360,6 +342,8 @@ public abstract class PatternParser
             return base;
         }
 
-        abstract boolean accept(char c);
+        public boolean accept(char c) {
+            return accept.test(c);
+        }
     }
 }
