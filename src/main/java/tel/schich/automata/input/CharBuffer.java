@@ -192,7 +192,7 @@ public final class CharBuffer
 
     /**
      * Returns the number of elements in the buffer. After the first element has been added, this will
-     * always be >= 1.
+     * always be &gt;= 1.
      * O(1)
      *
      * @return the number of elements in the buffer

@@ -46,7 +46,7 @@ public class UnorderedPair<L, R> implements Pair<L, R>
     }
 
     /**
-     * This implementation ignores the order of the fields, so <a, b> = <b, a>
+     * This implementation ignores the order of the fields, so &lt;a, b&gt; = &lt;b, a&gt;
      *
      * @param o the other object
      *
