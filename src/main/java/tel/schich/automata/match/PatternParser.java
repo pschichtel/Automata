@@ -93,6 +93,7 @@ public abstract class PatternParser
                     break;
                 case '.':
                     elements.add(matchWildcard());
+                    break;
                 default:
                     elements.addLast(readCharacter(stream, true));
             }
