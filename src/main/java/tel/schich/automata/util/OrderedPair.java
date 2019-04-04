@@ -85,4 +85,8 @@ public class OrderedPair<L, R> implements Pair<L, R>
     public String toString() {
         return "(" + left + ", " + right + ")";
     }
+
+    public static <L, R> OrderedPair<L, R> pair(L l, R r) {
+        return new OrderedPair<>(l, r);
+    }
 }

@@ -93,4 +93,8 @@ public class UnorderedPair<L, R> implements Pair<L, R>
     {
         return "<" + this.left + ", " + this.right + ">";
     }
+
+    public static <L, R> UnorderedPair<L, R> unorderedPair(L l, R r) {
+        return new UnorderedPair<>(l, r);
+    }
 }
