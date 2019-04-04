@@ -47,7 +47,7 @@ public abstract class FiniteAutomate<T extends Transition>
     private final Set<State> acceptingStates;
     private final State start;
 
-    private final Set<State> reachableStates;
+    private Set<State> reachableStates;
 
     protected FiniteAutomate(Set<State> states, Set<T> transitions, State start, Set<State> acceptingStates)
     {
@@ -60,7 +60,6 @@ public abstract class FiniteAutomate<T extends Transition>
         this.transitions = unmodifiableSet(transitions);
         this.acceptingStates = unmodifiableSet(acceptingStates);
         this.start = start;
-        this.reachableStates = unmodifiableSet(findReachableStates());
     }
 
     private Set<State> findReachableStates()
@@ -242,6 +241,13 @@ public abstract class FiniteAutomate<T extends Transition>
 
     public Set<State> getReachableStates()
     {
+        if (this.reachableStates == null) {
+            synchronized (this) {
+                if (this.reachableStates == null) {
+                    this.reachableStates = unmodifiableSet(findReachableStates());
+                }
+            }
+        }
         return this.reachableStates;
     }
 
@@ -251,6 +257,7 @@ public abstract class FiniteAutomate<T extends Transition>
         {
             return DFA.EMPTY;
         }
+
         DFA self = toDFA();
         final Set<State> states = new HashSet<>(self.getReachableStates());
         final Set<ExpectedTransition> transitions = new CopyOnWriteArraySet<>(self.getTransitions());
