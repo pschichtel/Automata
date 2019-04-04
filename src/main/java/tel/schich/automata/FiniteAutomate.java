@@ -37,6 +37,7 @@ import tel.schich.automata.util.UnorderedPair;
 
 import static java.util.Collections.disjoint;
 import static java.util.Collections.unmodifiableSet;
+import static tel.schich.automata.util.UnorderedPair.unorderedPair;
 import static tel.schich.automata.util.Util.asSet;
 import static tel.schich.automata.util.Util.fixPointIterate;
 
@@ -260,12 +261,23 @@ public abstract class FiniteAutomate<T extends Transition>
 
         DFA self = toDFA();
         final Set<State> states = new HashSet<>(self.getReachableStates());
-        final Set<ExpectedTransition> transitions = new CopyOnWriteArraySet<>(self.getTransitions());
+        final Set<ExpectedTransition> transitions = new CopyOnWriteArraySet<>();
         State start = self.getStartState();
-        final Set<State> accepting = new HashSet<>(self.getAcceptingStates());
+        final Set<State> accepting = new HashSet<>();
 
-        Set<UnorderedPair<State, State>> statePairs = new HashSet<>();
+        for (ExpectedTransition transition : self.getTransitions()) {
+            if (states.contains(transition.getOrigin()) && states.contains(transition.getDestination())) {
+                transitions.add(transition);
+            }
+        }
 
+        for (State acceptingState : self.getAcceptingStates()) {
+            if (states.contains(acceptingState)) {
+                accepting.add(acceptingState);
+            }
+        }
+
+        final Set<UnorderedPair<State, State>> statePairs = new HashSet<>();
         for (State p : states)
         {
             for (State q : states)
@@ -273,12 +285,12 @@ public abstract class FiniteAutomate<T extends Transition>
                 // number of iterations can be halved by removing iterated P's from Q in P >< Q
                 if (p != q)
                 {
-                    statePairs.add(new UnorderedPair<>(p, q));
+                    statePairs.add(unorderedPair(p, q));
                 }
             }
         }
 
-        Set<UnorderedPair<State, State>> separableStates = new HashSet<>();
+        final Set<UnorderedPair<State, State>> separableStates = new HashSet<>();
         for (UnorderedPair<State, State> p : statePairs)
         {
             // separable if either left or right is accepting
@@ -307,8 +319,7 @@ public abstract class FiniteAutomate<T extends Transition>
                     {
                         continue;
                     }
-                    if (separableStates.contains(new UnorderedPair<>(p, q)) && !separableStates.contains(
-                        pair))
+                    if (separableStates.contains(unorderedPair(p, q)) && !separableStates.contains(pair))
                     {
                         separableStates.add(pair);
                         changed = true;
@@ -322,7 +333,7 @@ public abstract class FiniteAutomate<T extends Transition>
                 {
                     continue;
                 }
-                if (separableStates.contains(new UnorderedPair<>(p, q)) && !separableStates.contains(pair))
+                if (separableStates.contains(unorderedPair(p, q)) && !separableStates.contains(pair))
                 {
                     separableStates.add(pair);
                     changed = true;
@@ -345,6 +356,7 @@ public abstract class FiniteAutomate<T extends Transition>
                 start = p;
             }
 
+            // TODO refactor this to not mutate during the iteration
             for (ExpectedTransition t : transitions)
             {
                 State origin = t.getOrigin();
@@ -363,8 +375,7 @@ public abstract class FiniteAutomate<T extends Transition>
                     transitions.remove(t);
                     if (t instanceof CharacterTransition)
                     {
-                        transitions.add(new CharacterTransition(origin, ((CharacterTransition)t).getWith(),
-                                                                destination));
+                        transitions.add(new CharacterTransition(origin, ((CharacterTransition)t).getWith(), destination));
                     }
                     else if (t instanceof WildcardTransition)
                     {

@@ -89,7 +89,7 @@ public class DFA extends FiniteAutomate<ExpectedTransition>
         return t.getDestination();
     }
 
-    private State transitionExplicit(State s, char c)
+    public State transitionExplicit(State s, char c)
     {
         TransitionMap transitionMap = this.transitionLookup.get(s);
         if (transitionMap == null)
