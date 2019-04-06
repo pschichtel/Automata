@@ -42,7 +42,7 @@ public final class CharBuffer
         {
             this.hook = new Node(c);
             this.size = 1;
-            System.out.println(this);
+            //System.out.println(this);
             return;
         }
 
@@ -61,7 +61,7 @@ public final class CharBuffer
         {
             this.distanceToHook++;
         }
-        System.out.println(this);
+        //System.out.println(this);
     }
 
     private void clean()

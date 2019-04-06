@@ -240,7 +240,7 @@ public class NFA extends FiniteAutomaton<Transition>
         Queue<Pair<State, Set<State>>> stateQueue = new LinkedList<>();
 
         Set<State> initialClosure = getStartStates();
-        System.out.println("1. " + start + " = ec(" + start + ") = " + initialClosure);
+        //System.out.println("1. " + start + " = ec(" + start + ") = " + initialClosure);
         stateQueue.offer(new OrderedPair<>(start, initialClosure));
         knownStates.put(initialClosure, start);
         if (willAccept(initialClosure))
@@ -257,7 +257,7 @@ public class NFA extends FiniteAutomaton<Transition>
 
             // check for wildcard edges
             Set<State> newStateSet = transition(stateSet);
-            System.out.print((++i) + ". Δ(" + state + ", *) = " + newStateSet);
+            //System.out.print((++i) + ". Δ(" + state + ", *) = " + newStateSet);
 
             if (!newStateSet.isEmpty())
             {
@@ -269,7 +269,7 @@ public class NFA extends FiniteAutomaton<Transition>
                     stateQueue.offer(new OrderedPair<>(newState, newStateSet));
                     knownStates.put(newStateSet, newState);
                     transitions.add(new WildcardTransition(state, newState));
-                    System.out.println(" = " + newState);
+                    //System.out.println(" = " + newState);
                     if (willAccept(newStateSet))
                     {
                         accepting.add(newState);
@@ -278,7 +278,7 @@ public class NFA extends FiniteAutomaton<Transition>
                 else
                 {
                     transitions.add(new WildcardTransition(state, alreadyKnown));
-                    System.out.println(" = " + alreadyKnown);
+                    //System.out.println(" = " + alreadyKnown);
                 }
             }
 
@@ -286,7 +286,7 @@ public class NFA extends FiniteAutomaton<Transition>
             for (char c : alphabetFor(stateSet))
             {
                 newStateSet = transitionExplicit(stateSet, c);
-                System.out.print((++i) + ". Δ(" + state + ", " + c + ") = " + newStateSet);
+                //System.out.print((++i) + ". Δ(" + state + ", " + c + ") = " + newStateSet);
                 if (newStateSet.isEmpty())
                 {
                     continue;
@@ -300,7 +300,7 @@ public class NFA extends FiniteAutomaton<Transition>
                     stateQueue.offer(new OrderedPair<>(newState, newStateSet));
                     knownStates.put(newStateSet, newState);
                     transitions.add(new CharacterTransition(state, c, newState));
-                    System.out.println(" = " + newState);
+                    //System.out.println(" = " + newState);
                     if (willAccept(newStateSet))
                     {
                         accepting.add(newState);
@@ -309,12 +309,12 @@ public class NFA extends FiniteAutomaton<Transition>
                 else
                 {
                     transitions.add(new CharacterTransition(state, c, alreadyKnown));
-                    System.out.println(" = " + alreadyKnown);
+                    //System.out.println(" = " + alreadyKnown);
                 }
             }
         }
 
-        System.out.println("Transitions: " + transitions.size());
+        //System.out.println("Transitions: " + transitions.size());
 
         return new DFA(states, transitions, start, accepting);
     }
