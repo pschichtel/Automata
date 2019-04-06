@@ -29,7 +29,7 @@ import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 import tel.schich.automata.transition.CharacterTransition;
-import tel.schich.automata.transition.ExpectedTransition;
+import tel.schich.automata.transition.PlannedTransition;
 import tel.schich.automata.transition.SpontaneousTransition;
 import tel.schich.automata.transition.Transition;
 import tel.schich.automata.transition.WildcardTransition;
@@ -261,11 +261,11 @@ public abstract class FiniteAutomaton<T extends Transition>
 
         DFA self = toDFA();
         final Set<State> states = new HashSet<>(self.getReachableStates());
-        final Set<ExpectedTransition> transitions = new CopyOnWriteArraySet<>();
+        final Set<PlannedTransition> transitions = new CopyOnWriteArraySet<>();
         State start = self.getStartState();
         final Set<State> accepting = new HashSet<>();
 
-        for (ExpectedTransition transition : self.getTransitions()) {
+        for (PlannedTransition transition : self.getTransitions()) {
             if (states.contains(transition.getOrigin()) && states.contains(transition.getDestination())) {
                 transitions.add(transition);
             }
@@ -357,7 +357,7 @@ public abstract class FiniteAutomaton<T extends Transition>
             }
 
             // TODO refactor this to not mutate during the iteration
-            for (ExpectedTransition t : transitions)
+            for (PlannedTransition t : transitions)
             {
                 State origin = t.getOrigin();
                 State destination = t.getDestination();

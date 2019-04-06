@@ -26,7 +26,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import tel.schich.automata.transition.CharacterTransition;
-import tel.schich.automata.transition.ExpectedTransition;
+import tel.schich.automata.transition.PlannedTransition;
 import tel.schich.automata.transition.WildcardTransition;
 
 public class TransitionMap
@@ -41,12 +41,12 @@ public class TransitionMap
         this.wildcard = wildcard;
     }
 
-    public static TransitionMap build(Set<ExpectedTransition> transitions)
+    public static TransitionMap build(Set<PlannedTransition> transitions)
     {
         final Map<Character, CharacterTransition> charTransitions = new HashMap<>();
         WildcardTransition wildcard = null;
 
-        for (final ExpectedTransition t : transitions)
+        for (final PlannedTransition t : transitions)
         {
             if (t instanceof CharacterTransition)
             {
@@ -70,14 +70,14 @@ public class TransitionMap
         return new TransitionMap(charTransitions, wildcard);
     }
 
-    public ExpectedTransition getTransitionFor(char c)
+    public PlannedTransition getTransitionFor(char c)
     {
         return getTransitionFor(c, getWildcard());
     }
 
-    ExpectedTransition getTransitionFor(char c, ExpectedTransition def)
+    PlannedTransition getTransitionFor(char c, PlannedTransition def)
     {
-        ExpectedTransition transition = this.charTransitions.get(c);
+        PlannedTransition transition = this.charTransitions.get(c);
         if (transition == null)
         {
             return def;

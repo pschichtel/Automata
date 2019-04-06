@@ -30,7 +30,7 @@ import java.util.Queue;
 import java.util.Set;
 
 import tel.schich.automata.transition.CharacterTransition;
-import tel.schich.automata.transition.ExpectedTransition;
+import tel.schich.automata.transition.PlannedTransition;
 import tel.schich.automata.transition.SpontaneousTransition;
 import tel.schich.automata.transition.Transition;
 import tel.schich.automata.transition.WildcardTransition;
@@ -51,7 +51,7 @@ public class NFA extends FiniteAutomaton<Transition>
         State a = new State();
         State b = new State();
         EPSILON = new NFA(asSet(a, b), asSet(new SpontaneousTransition(a, b)), a, asSet(b));
-        EMPTY = new NFA(asSet(a), emptySet(), a, emptySet());
+        EMPTY   = new NFA(asSet(a), emptySet(), a, emptySet());
     }
 
     public Set<State> getStartStates()
@@ -89,7 +89,7 @@ public class NFA extends FiniteAutomaton<Transition>
         return lookup.getSpontaneousTransitions();
     }
 
-    public Set<ExpectedTransition> getExpectedTransitionsFor(State s, char c)
+    public Set<PlannedTransition> getExpectedTransitionsFor(State s, char c)
     {
         TransitionMultiMap lookup = this.transitionLookup.get(s);
         if (lookup == null)
@@ -174,7 +174,7 @@ public class NFA extends FiniteAutomaton<Transition>
 
         for (State state : states)
         {
-            for (ExpectedTransition transition : getExpectedTransitionsFor(state, c))
+            for (PlannedTransition transition : getExpectedTransitionsFor(state, c))
             {
                 out.add(transition.getDestination());
             }
@@ -194,7 +194,7 @@ public class NFA extends FiniteAutomaton<Transition>
             {
                 continue;
             }
-            for (final ExpectedTransition transition : map.getTransitionsFor(c, emptySet()))
+            for (final PlannedTransition transition : map.getTransitionsFor(c, emptySet()))
             {
                 out.add(transition.getDestination());
             }
@@ -232,7 +232,7 @@ public class NFA extends FiniteAutomaton<Transition>
     public DFA toDFA()
     {
         final Set<State> states = new HashSet<>();
-        final Set<ExpectedTransition> transitions = new HashSet<>();
+        final Set<PlannedTransition> transitions = new HashSet<>();
         final State start = getStartState();
         final Set<State> accepting = new HashSet<>();
 

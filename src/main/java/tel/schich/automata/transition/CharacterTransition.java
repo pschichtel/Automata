@@ -24,7 +24,7 @@ package tel.schich.automata.transition;
 
 import tel.schich.automata.State;
 
-public class CharacterTransition extends ExpectedTransition
+public class CharacterTransition extends PlannedTransition
 {
     private final char with;
 
@@ -37,6 +37,11 @@ public class CharacterTransition extends ExpectedTransition
     public char getWith()
     {
         return this.with;
+    }
+
+    @Override
+    public CharacterTransition reverse() {
+        return new CharacterTransition(getDestination(), getWith(), getOrigin());
     }
 
     @Override

@@ -24,11 +24,16 @@ package tel.schich.automata.transition;
 
 import tel.schich.automata.State;
 
-public class WildcardTransition extends ExpectedTransition
+public class WildcardTransition extends PlannedTransition
 {
     public WildcardTransition(State origin, State destination)
     {
         super(origin, destination);
+    }
+
+    @Override
+    public WildcardTransition reverse() {
+        return new WildcardTransition(getDestination(), getOrigin());
     }
 
     @Override

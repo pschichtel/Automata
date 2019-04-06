@@ -30,7 +30,7 @@ import java.util.Set;
 import java.util.function.BiPredicate;
 
 import tel.schich.automata.transition.CharacterTransition;
-import tel.schich.automata.transition.ExpectedTransition;
+import tel.schich.automata.transition.PlannedTransition;
 import tel.schich.automata.transition.Transition;
 import tel.schich.automata.transition.WildcardTransition;
 import tel.schich.automata.util.OrderedPair;
@@ -39,7 +39,7 @@ import tel.schich.automata.util.Pair;
 import static java.util.Collections.emptySet;
 import static tel.schich.automata.util.Util.asSet;
 
-public class DFA extends FiniteAutomaton<ExpectedTransition>
+public class DFA extends FiniteAutomaton<PlannedTransition>
 {
     public static final DFA EMPTY;
 
@@ -51,17 +51,17 @@ public class DFA extends FiniteAutomaton<ExpectedTransition>
 
     private final Map<State, TransitionMap> transitionLookup;
 
-    public DFA(Set<State> states, Set<ExpectedTransition> transitions, State start, Set<State> acceptingStates)
+    public DFA(Set<State> states, Set<PlannedTransition> transitions, State start, Set<State> acceptingStates)
     {
         super(states, transitions, start, acceptingStates);
         this.transitionLookup = calculateTransitionLookup(transitions);
     }
 
-    private static Map<State, TransitionMap> calculateTransitionLookup(Set<ExpectedTransition> transitions)
+    private static Map<State, TransitionMap> calculateTransitionLookup(Set<PlannedTransition> transitions)
     {
         final Map<State, TransitionMap> transitionLookup = new HashMap<>();
 
-        for (Map.Entry<State, Set<ExpectedTransition>> entry : groupByState(transitions).entrySet())
+        for (Map.Entry<State, Set<PlannedTransition>> entry : groupByState(transitions).entrySet())
         {
             transitionLookup.put(entry.getKey(), TransitionMap.build(entry.getValue()));
         }
@@ -69,7 +69,7 @@ public class DFA extends FiniteAutomaton<ExpectedTransition>
         return transitionLookup;
     }
 
-    public ExpectedTransition getTransitionFor(State s, char c)
+    public PlannedTransition getTransitionFor(State s, char c)
     {
         TransitionMap transitionMap = this.transitionLookup.get(s);
         if (transitionMap == null)
@@ -96,7 +96,7 @@ public class DFA extends FiniteAutomaton<ExpectedTransition>
         {
             return ErrorState.ERROR;
         }
-        ExpectedTransition t = transitionMap.getTransitionFor(c, null);
+        PlannedTransition t = transitionMap.getTransitionFor(c, null);
         if (t == null)
         {
             return ErrorState.ERROR;
@@ -136,7 +136,7 @@ public class DFA extends FiniteAutomaton<ExpectedTransition>
     public boolean isComplete() {
 
         Set<State> stateWithWildcard = new HashSet<>();
-        for (final ExpectedTransition transition : getTransitions())
+        for (final PlannedTransition transition : getTransitions())
         {
             if (transition instanceof WildcardTransition)
             {
@@ -151,7 +151,7 @@ public class DFA extends FiniteAutomaton<ExpectedTransition>
     {
 
         Set<State> stateWithWildcard = new HashSet<>();
-        for (final ExpectedTransition transition : getTransitions())
+        for (final PlannedTransition transition : getTransitions())
         {
             if (transition instanceof WildcardTransition)
             {
@@ -162,7 +162,7 @@ public class DFA extends FiniteAutomaton<ExpectedTransition>
         if (stateWithWildcard.size() < getStates().size())
         {
             final Set<State> states = new HashSet<>(getStates());
-            final Set<ExpectedTransition> transitions = new HashSet<>(getTransitions());
+            final Set<PlannedTransition> transitions = new HashSet<>(getTransitions());
             final State start = getStartState();
             final Set<State> accepting = getAcceptingStates();
 
@@ -208,7 +208,7 @@ public class DFA extends FiniteAutomaton<ExpectedTransition>
         }
         final State start = stateMap.get(new OrderedPair<>(self.getStartState(), other.getStartState()));
 
-        Set<ExpectedTransition> transitions = new HashSet<>();
+        Set<PlannedTransition> transitions = new HashSet<>();
         for (final Entry<Pair<State, State>, State> e : stateMap.entrySet())
         {
             final State a = e.getKey().getLeft();
@@ -229,7 +229,7 @@ public class DFA extends FiniteAutomaton<ExpectedTransition>
 
                 // if there is already a wildcard between these states, another explicit transition is useless
                 boolean wildcardExisting = false;
-                for (final ExpectedTransition transition : transitions)
+                for (final PlannedTransition transition : transitions)
                 {
                     if (transition instanceof WildcardTransition)
                     {

@@ -53,6 +53,8 @@ public abstract class Transition
         return this.destination;
     }
 
+    public abstract Transition reverse();
+
     public abstract String getLabel();
 
     @Override

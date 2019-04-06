@@ -28,7 +28,7 @@ import tel.schich.automata.eval.Evaluator;
 import tel.schich.automata.eval.StateMachineEvaluator;
 import tel.schich.automata.match.Matcher;
 import tel.schich.automata.transition.CharacterTransition;
-import tel.schich.automata.transition.ExpectedTransition;
+import tel.schich.automata.transition.PlannedTransition;
 import tel.schich.automata.transition.Transition;
 import tel.schich.automata.transition.WildcardTransition;
 import tel.schich.automata.util.PrintingUtil;
@@ -87,7 +87,7 @@ public class DFATest
         State q7 = new NamedState("q7");
 
         Set<State> states = asSet(q0, q1, q2, q3, q4, q5, q6, q7);
-        Set<ExpectedTransition> transitions = asSet(
+        Set<PlannedTransition> transitions = asSet(
                 new CharacterTransition(q0, 'a', q1),
                 new CharacterTransition(q0, 'b', q2),
                 new CharacterTransition(q1, 'a', q3),
@@ -120,7 +120,7 @@ public class DFATest
         final State s2 = new State();
         final char acceptedChar = 'a';
 
-        final ExpectedTransition t = new CharacterTransition(s1, acceptedChar, s2);
+        final PlannedTransition t = new CharacterTransition(s1, acceptedChar, s2);
 
         final DFA a = new DFA(asSet(s1, s2), asSet(t), s1, asSet(s2));
         assertFalse("a should not be complete", a.isComplete());
@@ -142,7 +142,7 @@ public class DFATest
         final char acceptedChar = 'a';
         final char rejectedChar = 'r';
 
-        final ExpectedTransition t = new CharacterTransition(s1, acceptedChar, s2);
+        final PlannedTransition t = new CharacterTransition(s1, acceptedChar, s2);
 
         final DFA a = new DFA(asSet(s1, s2), asSet(t), s1, asSet(s2));
         final DFA aComplement = a.complement();
@@ -174,7 +174,7 @@ public class DFATest
         State s2 = new State();
         final Set<State> states = asSet(s0, s1, s2);
 
-        Set<ExpectedTransition> transitions = new HashSet<>();
+        Set<PlannedTransition> transitions = new HashSet<>();
         transitions.add(new WildcardTransition(s0, s1));
         transitions.add(new WildcardTransition(s1, s2));
         transitions.add(new WildcardTransition(s2, s0));
@@ -195,7 +195,7 @@ public class DFATest
         State s3 = new State();
         final Set<State> states = asSet(s0, s1, s2, s3);
 
-        Set<ExpectedTransition> transitions = new HashSet<>();
+        Set<PlannedTransition> transitions = new HashSet<>();
         transitions.add(new CharacterTransition(s0, 'a', s1));
         transitions.add(new CharacterTransition(s1, 'a', s2));
         transitions.add(new CharacterTransition(s2, 'a', s3));

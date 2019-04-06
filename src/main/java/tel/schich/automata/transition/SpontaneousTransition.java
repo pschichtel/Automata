@@ -34,6 +34,11 @@ public class SpontaneousTransition extends Transition
     }
 
     @Override
+    public SpontaneousTransition reverse() {
+        return new SpontaneousTransition(getDestination(), getOrigin());
+    }
+
+    @Override
     public String getLabel()
     {
         return EPSILON;

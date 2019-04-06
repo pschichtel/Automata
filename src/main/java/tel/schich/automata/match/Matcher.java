@@ -28,7 +28,7 @@ import java.util.regex.Pattern;
 import tel.schich.automata.DFA;
 import tel.schich.automata.State;
 import tel.schich.automata.transition.CharacterTransition;
-import tel.schich.automata.transition.ExpectedTransition;
+import tel.schich.automata.transition.PlannedTransition;
 import tel.schich.automata.transition.WildcardTransition;
 import tel.schich.automata.util.Util;
 
@@ -42,7 +42,7 @@ public abstract class Matcher
     {
         final State start = new State();
         final State accept = new State();
-        final ExpectedTransition t = new WildcardTransition(start, accept);
+        final PlannedTransition t = new WildcardTransition(start, accept);
         return new DFA(Util.asSet(start, accept), Util.asSet(t), start, Util.asSet(accept));
     }
 
@@ -54,7 +54,7 @@ public abstract class Matcher
     public static DFA matchAll(char... chars)
     {
         Set<State> states = new HashSet<>();
-        Set<ExpectedTransition> transitions = new HashSet<>();
+        Set<PlannedTransition> transitions = new HashSet<>();
         State start = new State();
 
         State lastState = start;
@@ -72,7 +72,7 @@ public abstract class Matcher
 
     public static DFA matchOne(char... chars)
     {
-        Set<ExpectedTransition> transitions = new HashSet<>();
+        Set<PlannedTransition> transitions = new HashSet<>();
         State start = new State();
         State end = new State();
 

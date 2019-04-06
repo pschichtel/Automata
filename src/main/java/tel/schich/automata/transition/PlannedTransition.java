@@ -24,9 +24,9 @@ package tel.schich.automata.transition;
 
 import tel.schich.automata.State;
 
-public abstract class ExpectedTransition extends Transition
+public abstract class PlannedTransition extends Transition
 {
-    public ExpectedTransition(State origin, State destination)
+    public PlannedTransition(State origin, State destination)
     {
         super(origin, destination);
     }
