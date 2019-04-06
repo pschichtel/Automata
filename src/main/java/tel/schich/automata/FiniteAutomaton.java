@@ -325,20 +325,22 @@ public abstract class FiniteAutomaton<T extends Transition>
                     {
                         separableStates.add(pair);
                         changed = true;
+                        break;
                     }
                 }
 
-                // check for wildcard transition
-                final State p = l.transition(self);
-                final State q = r.transition(self);
-                if (p == ErrorState.ERROR || q == ErrorState.ERROR)
+                if (!changed)
                 {
-                    continue;
-                }
-                if (separableStates.contains(unorderedPair(p, q)) && !separableStates.contains(pair))
-                {
-                    separableStates.add(pair);
-                    changed = true;
+                    // check for wildcard transition
+                    final State p = l.transition(self);
+                    final State q = r.transition(self);
+                    if (p == ErrorState.ERROR || q == ErrorState.ERROR) {
+                        continue;
+                    }
+                    if (separableStates.contains(unorderedPair(p, q)) && !separableStates.contains(pair)) {
+                        separableStates.add(pair);
+                        changed = true;
+                    }
                 }
             }
         }
@@ -387,7 +389,7 @@ public abstract class FiniteAutomaton<T extends Transition>
             }
         }
 
-        return new DFA(states, new HashSet<>(transitions), start, accepting);
+        return new DFA(states, transitions, start, accepting);
     }
 
     public DFA complement()
