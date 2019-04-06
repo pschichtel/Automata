@@ -110,7 +110,7 @@ public abstract class PatternParser
         NFA automaton = elements.getFirst().toNFA();
         for (final FiniteAutomaton<? extends Transition> element : elements.subList(1, elements.size()))
         {
-            automaton = automaton.and(element);
+            automaton = automaton.concat(element);
         }
 
         return automaton;
@@ -170,7 +170,7 @@ public abstract class PatternParser
 
         checkpoint.restore();
 
-        return automaton.and(readCharacter(s, true));
+        return automaton.concat(readCharacter(s, true));
     }
 
     private static int readNumber(CharacterStream s, NumberSyntax syntax)

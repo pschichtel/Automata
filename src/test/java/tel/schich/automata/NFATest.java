@@ -109,7 +109,7 @@ public class NFATest
     public void testWithWildcardToDFA()
     {
         printAutomoton("wildcard match", Matcher.matchWildcard());
-        final NFA a = Matcher.matchWildcard().and(Matcher.matchWildcard());
+        final NFA a = Matcher.matchWildcard().concat(Matcher.matchWildcard());
         //final NFA a = Matcher.matchAll('a').and(Matcher.matchAll('a'));
         printAutomoton("a", a);
         DFA dfa = a.toDFA();

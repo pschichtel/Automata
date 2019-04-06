@@ -22,16 +22,29 @@
  */
 package tel.schich.automata.util;
 
+import java.security.SignatureException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 import java.util.function.Function;
+
+import static java.util.Collections.unmodifiableSet;
 
 public abstract class Util
 {
     private Util()
     {
+    }
+
+    public static <T> Set<T> asSet(T first, T seconds) {
+        // optimized for the common case
+        Set<T> out = new HashSet<>(2);
+        out.add(first);
+        out.add(seconds);
+        return out;
     }
 
     @SafeVarargs
@@ -85,21 +98,24 @@ public abstract class Util
     public static <T> Set<T> fixPointIterate(Set<T> in, Function<T, Set<T>> func)
     {
         Set<T> result = new HashSet<>(in);
-        Set<T> newElements = new HashSet<>(in);
+        Set<T> temp = new HashSet<>();
 
         while (true)
         {
-            Set<T> temp = new HashSet<>();
-            for (T element : newElements)
+            for (T element : result)
             {
                 temp.addAll(func.apply(element));
             }
-            newElements = temp;
-            if (result.containsAll(newElements))
+            if (!result.addAll(temp))
             {
                 return result;
             }
-            result.addAll(newElements);
+            temp.clear();
         }
+    }
+
+    public static <T> Set<T> unmodifiableCopy(Set<T> orig)
+    {
+        return unmodifiableSet(new HashSet<>(orig));
     }
 }

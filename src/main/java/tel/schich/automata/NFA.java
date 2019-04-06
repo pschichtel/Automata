@@ -38,6 +38,7 @@ import tel.schich.automata.util.OrderedPair;
 import tel.schich.automata.util.Pair;
 
 import static java.util.Collections.emptySet;
+import static java.util.Collections.singleton;
 import static tel.schich.automata.util.Util.asSet;
 import static tel.schich.automata.util.Util.fixPointIterate;
 
@@ -50,8 +51,8 @@ public class NFA extends FiniteAutomaton<Transition>
     {
         State a = new State();
         State b = new State();
-        EPSILON = new NFA(asSet(a, b), asSet(new SpontaneousTransition(a, b)), a, asSet(b));
-        EMPTY   = new NFA(asSet(a), emptySet(), a, emptySet());
+        EPSILON = new NFA(asSet(a, b), singleton(new SpontaneousTransition(a, b)), a, singleton(b));
+        EMPTY   = new NFA(singleton(a), emptySet(), a, emptySet());
     }
 
     public Set<State> getStartStates()
@@ -89,7 +90,7 @@ public class NFA extends FiniteAutomaton<Transition>
         return lookup.getSpontaneousTransitions();
     }
 
-    public Set<PlannedTransition> getExpectedTransitionsFor(State s, char c)
+    public Set<PlannedTransition> getPlannedTransitionsFor(State s, char c)
     {
         TransitionMultiMap lookup = this.transitionLookup.get(s);
         if (lookup == null)
@@ -174,7 +175,7 @@ public class NFA extends FiniteAutomaton<Transition>
 
         for (State state : states)
         {
-            for (PlannedTransition transition : getExpectedTransitionsFor(state, c))
+            for (PlannedTransition transition : getPlannedTransitionsFor(state, c))
             {
                 out.add(transition.getDestination());
             }
@@ -243,12 +244,14 @@ public class NFA extends FiniteAutomaton<Transition>
         //System.out.println("1. " + start + " = ec(" + start + ") = " + initialClosure);
         stateQueue.offer(new OrderedPair<>(start, initialClosure));
         knownStates.put(initialClosure, start);
+
+        states.add(start);
         if (willAccept(initialClosure))
         {
             accepting.add(start);
         }
 
-        int i = 1;
+        //int i = 1;
         while (!stateQueue.isEmpty())
         {
             final Pair<State, Set<State>> pair = stateQueue.poll();

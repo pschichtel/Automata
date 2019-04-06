@@ -30,7 +30,9 @@ import tel.schich.automata.State;
 import tel.schich.automata.transition.CharacterTransition;
 import tel.schich.automata.transition.PlannedTransition;
 import tel.schich.automata.transition.WildcardTransition;
-import tel.schich.automata.util.Util;
+
+import static java.util.Collections.singleton;
+import static tel.schich.automata.util.Util.asSet;
 
 public abstract class Matcher
 {
@@ -43,7 +45,7 @@ public abstract class Matcher
         final State start = new State();
         final State accept = new State();
         final PlannedTransition t = new WildcardTransition(start, accept);
-        return new DFA(Util.asSet(start, accept), Util.asSet(t), start, Util.asSet(accept));
+        return new DFA(asSet(start, accept), singleton(t), start, singleton(accept));
     }
 
     public static DFA match(String s)
@@ -56,6 +58,7 @@ public abstract class Matcher
         Set<State> states = new HashSet<>();
         Set<PlannedTransition> transitions = new HashSet<>();
         State start = new State();
+        states.add(start);
 
         State lastState = start;
 
@@ -67,7 +70,7 @@ public abstract class Matcher
             lastState = state;
         }
 
-        return new DFA(states, transitions, start, Util.asSet(lastState));
+        return new DFA(states, transitions, start, singleton(lastState));
     }
 
     public static DFA matchOne(char... chars)
@@ -81,7 +84,7 @@ public abstract class Matcher
             transitions.add(new CharacterTransition(start, c, end));
         }
 
-        return new DFA(Util.asSet(start, end), transitions, start, Util.asSet(end));
+        return new DFA(asSet(start, end), transitions, start, singleton(end));
     }
 
     public static DFA matchJavaCompatibleRegex(String regex)

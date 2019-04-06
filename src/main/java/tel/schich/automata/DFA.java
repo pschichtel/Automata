@@ -37,7 +37,7 @@ import tel.schich.automata.util.OrderedPair;
 import tel.schich.automata.util.Pair;
 
 import static java.util.Collections.emptySet;
-import static tel.schich.automata.util.Util.asSet;
+import static java.util.Collections.singleton;
 
 public class DFA extends FiniteAutomaton<PlannedTransition>
 {
@@ -46,7 +46,7 @@ public class DFA extends FiniteAutomaton<PlannedTransition>
     static
     {
         State a = new State();
-        EMPTY = new DFA(asSet(a), asSet(new WildcardTransition(a, a)), a, emptySet());
+        EMPTY = new DFA(singleton(a), singleton(new WildcardTransition(a, a)), a, emptySet());
     }
 
     private final Map<State, TransitionMap> transitionLookup;
@@ -251,7 +251,8 @@ public class DFA extends FiniteAutomaton<PlannedTransition>
         return new DFA(new HashSet<>(stateMap.values()), transitions, start, accepting);
     }
 
-    public DFA difference(FiniteAutomaton<? extends Transition> other) {
+    public DFA difference(FiniteAutomaton<? extends Transition> other)
+    {
         return this.intersectWith(other.complement());
     }
 

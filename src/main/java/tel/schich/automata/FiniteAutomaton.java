@@ -36,10 +36,11 @@ import tel.schich.automata.transition.WildcardTransition;
 import tel.schich.automata.util.UnorderedPair;
 
 import static java.util.Collections.disjoint;
+import static java.util.Collections.singleton;
 import static java.util.Collections.unmodifiableSet;
 import static tel.schich.automata.util.UnorderedPair.unorderedPair;
-import static tel.schich.automata.util.Util.asSet;
 import static tel.schich.automata.util.Util.fixPointIterate;
+import static tel.schich.automata.util.Util.unmodifiableCopy;
 
 public abstract class FiniteAutomaton<T extends Transition>
 {
@@ -48,24 +49,19 @@ public abstract class FiniteAutomaton<T extends Transition>
     private final Set<State> acceptingStates;
     private final State start;
 
-    private Set<State> reachableStates;
+    private volatile Set<State> reachableStates;
 
     protected FiniteAutomaton(Set<State> states, Set<T> transitions, State start, Set<State> acceptingStates)
     {
-
-        states = new HashSet<>(states);
-        states.addAll(acceptingStates);
-        states.add(start);
-
-        this.states = unmodifiableSet(states);
-        this.transitions = unmodifiableSet(transitions);
-        this.acceptingStates = unmodifiableSet(acceptingStates);
+        this.states = unmodifiableCopy(states);
+        this.transitions = unmodifiableCopy(transitions);
         this.start = start;
+        this.acceptingStates = unmodifiableCopy(acceptingStates);
     }
 
     private Set<State> findReachableStates()
     {
-        return fixPointIterate(asSet(getStartState()), in -> {
+        return fixPointIterate(singleton(getStartState()), in -> {
             Set<State> out = new HashSet<>();
 
             for (Transition t : getTransitions())
@@ -115,7 +111,7 @@ public abstract class FiniteAutomaton<T extends Transition>
         return chars;
     }
 
-    public NFA and(FiniteAutomaton<? extends Transition> other)
+    public NFA concat(FiniteAutomaton<? extends Transition> other)
     {
         final Set<State> states = mergeStates(this, other);
         final Set<Transition> transitions = mergeTransitions(this, other);
@@ -136,6 +132,9 @@ public abstract class FiniteAutomaton<T extends Transition>
         final State start = new State();
         final State accept = new State();
 
+        states.add(start);
+        states.add(accept);
+
         transitions.add(new SpontaneousTransition(start, this.getStartState()));
         transitions.add(new SpontaneousTransition(start, other.getStartState()));
 
@@ -149,7 +148,7 @@ public abstract class FiniteAutomaton<T extends Transition>
             transitions.add(new SpontaneousTransition(state, accept));
         }
 
-        return new NFA(states, transitions, start, asSet(accept));
+        return new NFA(states, transitions, start, singleton(accept));
     }
 
     public NFA kleenePlus()
@@ -159,6 +158,8 @@ public abstract class FiniteAutomaton<T extends Transition>
 
         final State start = new State();
         final State accept = new State();
+        states.add(start);
+        states.add(accept);
 
         transitions.add(new SpontaneousTransition(start, getStartState()));
         for (State state : getAcceptingStates())
@@ -167,7 +168,7 @@ public abstract class FiniteAutomaton<T extends Transition>
             transitions.add(new SpontaneousTransition(state, accept));
         }
 
-        return new NFA(states, transitions, start, asSet(accept));
+        return new NFA(states, transitions, start, singleton(accept));
     }
 
     public NFA kleeneStar()
@@ -195,7 +196,7 @@ public abstract class FiniteAutomaton<T extends Transition>
         NFA automaton = this.toNFA();
         for (int i = 1; i < n; ++i)
         {
-            automaton = automaton.and(this);
+            automaton = automaton.concat(this);
         }
         return automaton;
     }
@@ -210,7 +211,7 @@ public abstract class FiniteAutomaton<T extends Transition>
         {
             return kleenePlus();
         }
-        return repeat(min - 1).and(this.kleenePlus());
+        return repeat(min - 1).concat(this.kleenePlus());
     }
 
     public NFA repeatMinMax(int min, int max)
@@ -229,7 +230,7 @@ public abstract class FiniteAutomaton<T extends Transition>
         NFA maybe = this.or(NFA.EPSILON);
         for (int i = min; i < max; ++i)
         {
-            automaton = automaton.and(maybe);
+            automaton = automaton.concat(maybe);
         }
 
         return automaton;
@@ -245,6 +246,7 @@ public abstract class FiniteAutomaton<T extends Transition>
         if (this.reachableStates == null) {
             synchronized (this) {
                 if (this.reachableStates == null) {
+                    // no copy, trusted source
                     this.reachableStates = unmodifiableSet(findReachableStates());
                 }
             }
@@ -453,25 +455,17 @@ public abstract class FiniteAutomaton<T extends Transition>
         return result;
     }
 
-    @SafeVarargs
-    protected static Set<State> mergeStates(FiniteAutomaton<? extends Transition>... automata)
+    private static Set<State> mergeStates(FiniteAutomaton<? extends Transition> left, FiniteAutomaton<? extends Transition> right)
     {
-        Set<State> states = new HashSet<>();
-        for (FiniteAutomaton<? extends Transition> automaton : automata)
-        {
-            states.addAll(automaton.getStates());
-        }
+        Set<State> states = new HashSet<>(left.getStates());
+        states.addAll(right.getStates());
         return states;
     }
 
-    @SafeVarargs
-    protected static Set<Transition> mergeTransitions(FiniteAutomaton<? extends Transition>... automata)
+    private static Set<Transition> mergeTransitions(FiniteAutomaton<? extends Transition> left, FiniteAutomaton<? extends Transition> right)
     {
-        Set<Transition> transitions = new HashSet<>();
-        for (FiniteAutomaton<? extends Transition> automaton : automata)
-        {
-            transitions.addAll(automaton.getTransitions());
-        }
+        Set<Transition> transitions = new HashSet<>(left.getTransitions());
+        transitions.addAll(right.getTransitions());
         return transitions;
     }
 

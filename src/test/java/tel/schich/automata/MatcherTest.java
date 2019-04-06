@@ -45,7 +45,7 @@ public class MatcherTest
         DFA a = Matcher.matchAll('a');
         DFA b = Matcher.matchAll('b');
 
-        NFA c = a.and(b);
+        NFA c = a.concat(b);
         PrintingUtil.printAutomoton("And", c);
     }
 
@@ -55,7 +55,7 @@ public class MatcherTest
         DFA a = Matcher.matchAll('a');
         DFA b = Matcher.matchAll('b');
 
-        NFA c = a.and(b);
+        NFA c = a.concat(b);
         PrintingUtil.printAutomoton("Or", c);
     }
 

@@ -36,23 +36,24 @@ import static java.util.Collections.unmodifiableSet;
 
 final class TransitionMultiMap
 {
-    private final Map<Character, Set<PlannedTransition>> expectedTransitions;
+    private final Map<Character, Set<PlannedTransition>> plannedTransitions;
     private final Set<SpontaneousTransition> spontaneousTransitions;
     private final Set<Character> alphabet;
     private final Set<WildcardTransition> wildcards;
 
-    private TransitionMultiMap(Map<Character, Set<PlannedTransition>> expectedTransitions, Set<WildcardTransition> wildcards,
+    private TransitionMultiMap(Map<Character, Set<PlannedTransition>> plannedTransitions, Set<WildcardTransition> wildcards,
                                Set<SpontaneousTransition> spontaneousTransitions, Set<Character> alphabet)
     {
+        // set doesn't need to be copied, the sets come from a trusted source
         this.wildcards = unmodifiableSet(wildcards);
-        this.expectedTransitions = expectedTransitions;
+        this.plannedTransitions = plannedTransitions;
         this.spontaneousTransitions = unmodifiableSet(spontaneousTransitions);
         this.alphabet = unmodifiableSet(alphabet);
     }
 
     public static TransitionMultiMap build(Set<Transition> transitions)
     {
-        Map<Character, Set<PlannedTransition>> expectedTransitions = new HashMap<>();
+        Map<Character, Set<PlannedTransition>> plannedTransitions = new HashMap<>();
         Set<SpontaneousTransition> spontaneousTransitions = new HashSet<>();
         Set<Character> expectedChars = new HashSet<>();
         Set<WildcardTransition> wildcards = new HashSet<>();
@@ -66,7 +67,7 @@ final class TransitionMultiMap
             else if (t instanceof CharacterTransition)
             {
                 CharacterTransition et = (CharacterTransition)t;
-                Set<PlannedTransition> expected = expectedTransitions.computeIfAbsent(et.getWith(), k -> new HashSet<>());
+                Set<PlannedTransition> expected = plannedTransitions.computeIfAbsent(et.getWith(), k -> new HashSet<>());
                 expected.add(et);
                 expectedChars.add(et.getWith());
             }
@@ -79,7 +80,7 @@ final class TransitionMultiMap
                 throw new UnsupportedOperationException("Unknown transition type!");
             }
         }
-        return new TransitionMultiMap(expectedTransitions, wildcards, spontaneousTransitions, expectedChars);
+        return new TransitionMultiMap(plannedTransitions, wildcards, spontaneousTransitions, expectedChars);
     }
 
     public Set<PlannedTransition> getTransitionsFor(char c)
@@ -90,7 +91,7 @@ final class TransitionMultiMap
     @SuppressWarnings("unchecked")
     public Set<PlannedTransition> getTransitionsFor(char c, Set<? extends PlannedTransition> def)
     {
-        Set<PlannedTransition> transitions = expectedTransitions.get(c);
+        Set<PlannedTransition> transitions = plannedTransitions.get(c);
         if (transitions == null)
         {
             return (Set<PlannedTransition>)def;
@@ -116,6 +117,6 @@ final class TransitionMultiMap
     @Override
     public String toString()
     {
-        return "Σ = " + getAlphabet() + ", ε-δ = " + getSpontaneousTransitions() + ", δ = " + this.expectedTransitions;
+        return "Σ = " + getAlphabet() + ", ε-δ = " + getSpontaneousTransitions() + ", δ = " + this.plannedTransitions;
     }
 }
