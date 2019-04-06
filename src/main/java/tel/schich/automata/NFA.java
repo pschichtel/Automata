@@ -34,11 +34,11 @@ import tel.schich.automata.transition.PlannedTransition;
 import tel.schich.automata.transition.SpontaneousTransition;
 import tel.schich.automata.transition.Transition;
 import tel.schich.automata.transition.WildcardTransition;
-import tel.schich.automata.util.OrderedPair;
 import tel.schich.automata.util.Pair;
 
 import static java.util.Collections.emptySet;
 import static java.util.Collections.singleton;
+import static tel.schich.automata.util.OrderedPair.pair;
 import static tel.schich.automata.util.Util.asSet;
 import static tel.schich.automata.util.Util.fixPointIterate;
 
@@ -242,7 +242,7 @@ public class NFA extends FiniteAutomaton<Transition>
 
         Set<State> initialClosure = getStartStates();
         //System.out.println("1. " + start + " = ec(" + start + ") = " + initialClosure);
-        stateQueue.offer(new OrderedPair<>(start, initialClosure));
+        stateQueue.offer(pair(start, initialClosure));
         knownStates.put(initialClosure, start);
 
         states.add(start);
@@ -269,7 +269,7 @@ public class NFA extends FiniteAutomaton<Transition>
                 {
                     State newState = new State();
                     states.add(newState);
-                    stateQueue.offer(new OrderedPair<>(newState, newStateSet));
+                    stateQueue.offer(pair(newState, newStateSet));
                     knownStates.put(newStateSet, newState);
                     transitions.add(new WildcardTransition(state, newState));
                     //System.out.println(" = " + newState);
@@ -300,7 +300,7 @@ public class NFA extends FiniteAutomaton<Transition>
                 {
                     State newState = new State();
                     states.add(newState);
-                    stateQueue.offer(new OrderedPair<>(newState, newStateSet));
+                    stateQueue.offer(pair(newState, newStateSet));
                     knownStates.put(newStateSet, newState);
                     transitions.add(new CharacterTransition(state, c, newState));
                     //System.out.println(" = " + newState);

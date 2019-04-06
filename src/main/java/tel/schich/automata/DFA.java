@@ -38,6 +38,7 @@ import tel.schich.automata.util.Pair;
 
 import static java.util.Collections.emptySet;
 import static java.util.Collections.singleton;
+import static tel.schich.automata.util.OrderedPair.pair;
 
 public class DFA extends FiniteAutomaton<PlannedTransition>
 {
@@ -199,16 +200,17 @@ public class DFA extends FiniteAutomaton<PlannedTransition>
             for (final State otherState : other.getStates())
             {
                 final State newState = new NamedState(selfState.getLabel() + "|" + otherState.getLabel());
-                stateMap.put(new OrderedPair<>(selfState, otherState), newState);
+                stateMap.put(pair(selfState, otherState), newState);
                 if (shouldAccept.test(self.isAccepting(selfState), other.isAccepting(otherState)))
                 {
                     accepting.add(newState);
                 }
             }
         }
-        final State start = stateMap.get(new OrderedPair<>(self.getStartState(), other.getStartState()));
+        final State start = stateMap.get(pair(self.getStartState(), other.getStartState()));
 
         Set<PlannedTransition> transitions = new HashSet<>();
+        Set<OrderedPair<State, State>> wildcardTransitions = new HashSet<>();
         for (final Entry<Pair<State, State>, State> e : stateMap.entrySet())
         {
             final State a = e.getKey().getLeft();
@@ -218,30 +220,19 @@ public class DFA extends FiniteAutomaton<PlannedTransition>
             /// check against wildcard
             State aNext = a.transition(self);
             State bNext = b.transition(other);
-            transitions.add(new WildcardTransition(ab, stateMap.get(new OrderedPair<>(aNext, bNext))));
+            State abNext = stateMap.get(pair(aNext, bNext));
+            transitions.add(new WildcardTransition(ab, abNext));
+            wildcardTransitions.add(pair(ab, abNext));
 
             // check against alphabet
             for (final char c : alphabet)
             {
                 aNext = a.transition(self, c);
                 bNext = b.transition(other, c);
-                final State abNext = stateMap.get(new OrderedPair<>(aNext, bNext));
+                abNext = stateMap.get(pair(aNext, bNext));
 
                 // if there is already a wildcard between these states, another explicit transition is useless
-                boolean wildcardExisting = false;
-                for (final PlannedTransition transition : transitions)
-                {
-                    if (transition instanceof WildcardTransition)
-                    {
-                        WildcardTransition w = (WildcardTransition)transition;
-                        if (w.getOrigin() == ab && w.getDestination() == abNext)
-                        {
-                            wildcardExisting = true;
-                            break;
-                        }
-                    }
-                }
-                if (!wildcardExisting)
+                if (!wildcardTransitions.contains(pair(ab, abNext)))
                 {
                     transitions.add(new CharacterTransition(ab, c, abNext));
                 }

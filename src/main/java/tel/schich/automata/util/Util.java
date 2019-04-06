@@ -32,6 +32,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 import static java.util.Collections.unmodifiableSet;
+import static tel.schich.automata.util.OrderedPair.pair;
 
 public abstract class Util
 {
@@ -61,7 +62,7 @@ public abstract class Util
         {
             for (R r : right)
             {
-                out.add(new OrderedPair<>(l, r));
+                out.add(pair(l, r));
             }
         }
 
