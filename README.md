@@ -1,4 +1,4 @@
-Automata
+Automata [![Maven Central](https://img.shields.io/maven-central/v/tel.schich/automata.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22tel.schich%22%20AND%20a:%22automata%22)
 ========
 
 A library that implements formal finite state automata.
