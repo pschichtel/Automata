@@ -27,26 +27,26 @@ import tel.schich.automata.State;
 
 public class DFAEvaluator implements StateMachineEvaluator
 {
-    private final DFA automate;
+    private final DFA automaton;
     private State current;
 
-    public DFAEvaluator(DFA automate)
+    public DFAEvaluator(DFA automaton)
     {
-        this.automate = automate;
-        this.current = automate.getStartState();
+        this.automaton = automaton;
+        this.current = automaton.getStartState();
     }
 
     @Override
     public boolean transition(char c)
     {
-        this.current = this.current.transition(this.automate, c);
+        this.current = this.current.transition(this.automaton, c);
         return isCurrentAccepting();
     }
 
     @Override
     public boolean isCurrentAccepting()
     {
-        return this.automate.isAccepting(this.current);
+        return this.automaton.isAccepting(this.current);
     }
 
     @Override

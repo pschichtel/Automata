@@ -39,7 +39,7 @@ import tel.schich.automata.util.Pair;
 import static java.util.Collections.emptySet;
 import static tel.schich.automata.util.Util.asSet;
 
-public class DFA extends FiniteAutomate<ExpectedTransition>
+public class DFA extends FiniteAutomaton<ExpectedTransition>
 {
     public static final DFA EMPTY;
 
@@ -184,7 +184,7 @@ public class DFA extends FiniteAutomate<ExpectedTransition>
     }
 
 
-    public DFA combine(FiniteAutomate<? extends Transition> o, BiPredicate<Boolean, Boolean> shouldAccept)
+    public DFA combine(FiniteAutomaton<? extends Transition> o, BiPredicate<Boolean, Boolean> shouldAccept)
     {
         final DFA self = toDFA().complete();
         final DFA other = o.toDFA().complete();
@@ -251,21 +251,21 @@ public class DFA extends FiniteAutomate<ExpectedTransition>
         return new DFA(new HashSet<>(stateMap.values()), transitions, start, accepting);
     }
 
-    public DFA difference(FiniteAutomate<? extends Transition> other) {
+    public DFA difference(FiniteAutomaton<? extends Transition> other) {
         return this.intersectWith(other.complement());
     }
 
-    public DFA union(FiniteAutomate<? extends Transition> other)
+    public DFA union(FiniteAutomaton<? extends Transition> other)
     {
         return combine(other, (a, b) -> a || b);
     }
 
-    public DFA intersectWith(FiniteAutomate<? extends Transition> other)
+    public DFA intersectWith(FiniteAutomaton<? extends Transition> other)
     {
         return combine(other, (a, b) -> a && b);
     }
 
-    public DFA without(FiniteAutomate<? extends Transition> other)
+    public DFA without(FiniteAutomaton<? extends Transition> other)
     {
         return combine(other, (a, b) -> a && !b);
     }

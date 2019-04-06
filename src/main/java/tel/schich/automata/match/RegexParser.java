@@ -25,12 +25,12 @@ package tel.schich.automata.match;
 import java.util.LinkedList;
 import tel.schich.automata.input.CharacterStream;
 import tel.schich.automata.DFA;
-import tel.schich.automata.FiniteAutomate;
+import tel.schich.automata.FiniteAutomaton;
 import tel.schich.automata.NFA;
 import tel.schich.automata.transition.Transition;
 import tel.schich.automata.input.source.CharSequenceSource;
 
-import static tel.schich.automata.match.PatternParser.bakeAutomate;
+import static tel.schich.automata.match.PatternParser.bakeAutomaton;
 import static tel.schich.automata.match.PatternParser.readCharacter;
 
 public abstract class RegexParser
@@ -50,7 +50,7 @@ public abstract class RegexParser
 
     private static NFA readExpression(CharacterStream stream, int depth)
     {
-        LinkedList<FiniteAutomate<? extends Transition>> elements = new LinkedList<>();
+        LinkedList<FiniteAutomaton<? extends Transition>> elements = new LinkedList<>();
 
         for (final char c : stream)
         {
@@ -65,7 +65,7 @@ public abstract class RegexParser
                         break;
                     }
                 case '|':
-                    NFA left = bakeAutomate(elements);
+                    NFA left = bakeAutomaton(elements);
                     NFA right = readExpression(stream, depth);
                     elements.clear();
                     elements.add(left.or(right));
@@ -80,6 +80,6 @@ public abstract class RegexParser
                     elements.addLast(readCharacter(stream, true));
             }
         }
-        return bakeAutomate(elements);
+        return bakeAutomaton(elements);
     }
 }

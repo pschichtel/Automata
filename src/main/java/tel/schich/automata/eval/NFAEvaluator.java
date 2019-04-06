@@ -28,22 +28,22 @@ import tel.schich.automata.State;
 
 public class NFAEvaluator implements StateMachineEvaluator
 {
-    private final NFA automate;
+    private final NFA automaton;
     private Set<State> currentStates;
     private boolean currentlyAccepting;
 
-    public NFAEvaluator(NFA automate)
+    public NFAEvaluator(NFA automaton)
     {
-        this.automate = automate;
-        this.currentStates = automate.getStartStates();
-        this.currentlyAccepting = automate.isAccepting(this.currentStates);
+        this.automaton = automaton;
+        this.currentStates = automaton.getStartStates();
+        this.currentlyAccepting = automaton.isAccepting(this.currentStates);
     }
 
     @Override
     public boolean transition(char c)
     {
-        this.currentStates = this.automate.transition(this.currentStates, c);
-        this.currentlyAccepting = this.automate.isAccepting(this.currentStates);
+        this.currentStates = this.automaton.transition(this.currentStates, c);
+        this.currentlyAccepting = this.automaton.isAccepting(this.currentStates);
         return isCurrentAccepting();
     }
 

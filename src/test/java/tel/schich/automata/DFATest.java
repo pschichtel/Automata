@@ -343,9 +343,9 @@ public class DFATest
         assertFalse("difference: ab", matchAgainstString(difference, "ab"));
     }
 
-    private static boolean matchAgainstString(FiniteAutomate<? extends Transition> automate, String str)
+    private static boolean matchAgainstString(FiniteAutomaton<? extends Transition> automaton, String str)
     {
-        StateMachineEvaluator evaluator = Evaluator.eval(automate);
+        StateMachineEvaluator evaluator = Evaluator.eval(automaton);
         System.out.print(evaluator);
         for (final char c : str.toCharArray())
         {

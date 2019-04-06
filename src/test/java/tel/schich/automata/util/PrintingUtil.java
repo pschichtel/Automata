@@ -24,7 +24,7 @@ package tel.schich.automata.util;
 
 import java.util.Set;
 
-import tel.schich.automata.FiniteAutomate;
+import tel.schich.automata.FiniteAutomaton;
 import tel.schich.automata.State;
 import tel.schich.automata.transition.Transition;
 
@@ -33,7 +33,7 @@ public abstract class PrintingUtil
     private PrintingUtil()
     {}
 
-    public static void printAutomoton(String name, FiniteAutomate<? extends Transition> a)
+    public static void printAutomoton(String name, FiniteAutomaton<? extends Transition> a)
     {
         System.out.println(name + ":");
         System.out.println("States:      " + a.getStates());
@@ -43,7 +43,7 @@ public abstract class PrintingUtil
         System.out.println();
     }
 
-    public static void automatonToDot(String name, FiniteAutomate<? extends Transition> a)
+    public static void automatonToDot(String name, FiniteAutomaton<? extends Transition> a)
     {
         StringBuilder out = new StringBuilder(
                 "digraph {\n"

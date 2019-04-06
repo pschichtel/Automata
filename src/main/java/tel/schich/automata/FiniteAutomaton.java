@@ -41,7 +41,7 @@ import static tel.schich.automata.util.UnorderedPair.unorderedPair;
 import static tel.schich.automata.util.Util.asSet;
 import static tel.schich.automata.util.Util.fixPointIterate;
 
-public abstract class FiniteAutomate<T extends Transition>
+public abstract class FiniteAutomaton<T extends Transition>
 {
     private final Set<State> states;
     private final Set<T> transitions;
@@ -50,7 +50,7 @@ public abstract class FiniteAutomate<T extends Transition>
 
     private Set<State> reachableStates;
 
-    protected FiniteAutomate(Set<State> states, Set<T> transitions, State start, Set<State> acceptingStates)
+    protected FiniteAutomaton(Set<State> states, Set<T> transitions, State start, Set<State> acceptingStates)
     {
 
         states = new HashSet<>(states);
@@ -115,7 +115,7 @@ public abstract class FiniteAutomate<T extends Transition>
         return chars;
     }
 
-    public NFA and(FiniteAutomate<? extends Transition> other)
+    public NFA and(FiniteAutomaton<? extends Transition> other)
     {
         final Set<State> states = mergeStates(this, other);
         final Set<Transition> transitions = mergeTransitions(this, other);
@@ -128,7 +128,7 @@ public abstract class FiniteAutomate<T extends Transition>
         return new NFA(states, transitions, this.getStartState(), other.getAcceptingStates());
     }
 
-    public NFA or(FiniteAutomate<? extends Transition> other)
+    public NFA or(FiniteAutomaton<? extends Transition> other)
     {
         final Set<State> states = mergeStates(this, other);
         final Set<Transition> transitions = mergeTransitions(this, other);
@@ -192,12 +192,12 @@ public abstract class FiniteAutomate<T extends Transition>
         {
             return NFA.EPSILON;
         }
-        NFA automate = this.toNFA();
+        NFA automaton = this.toNFA();
         for (int i = 1; i < n; ++i)
         {
-            automate = automate.and(this);
+            automaton = automaton.and(this);
         }
-        return automate;
+        return automaton;
     }
 
     public NFA repeatMin(int min)
@@ -220,19 +220,19 @@ public abstract class FiniteAutomate<T extends Transition>
             throw new IllegalArgumentException("max must be >= min");
         }
 
-        NFA automate = repeat(min);
+        NFA automaton = repeat(min);
         if (min == max)
         {
-            return automate;
+            return automaton;
         }
 
         NFA maybe = this.or(NFA.EPSILON);
         for (int i = min; i < max; ++i)
         {
-            automate = automate.and(maybe);
+            automaton = automaton.and(maybe);
         }
 
-        return automate;
+        return automaton;
     }
 
     public boolean isAccepting(State s)
@@ -406,7 +406,7 @@ public abstract class FiniteAutomate<T extends Transition>
         return disjoint(getReachableStates(), getAcceptingStates());
     }
 
-    public boolean isEquivalentTo(FiniteAutomate<? extends Transition> o)
+    public boolean isEquivalentTo(FiniteAutomaton<? extends Transition> o)
     {
         final DFA self = toDFA();
         final DFA other = o.toDFA();
@@ -421,12 +421,12 @@ public abstract class FiniteAutomate<T extends Transition>
         {
             return true;
         }
-        if (!(o instanceof FiniteAutomate))
+        if (!(o instanceof FiniteAutomaton))
         {
             return false;
         }
 
-        final FiniteAutomate<?> that = (FiniteAutomate<?>)o;
+        final FiniteAutomaton<?> that = (FiniteAutomaton<?>)o;
 
         if (!states.equals(that.states))
         {
@@ -454,23 +454,23 @@ public abstract class FiniteAutomate<T extends Transition>
     }
 
     @SafeVarargs
-    protected static Set<State> mergeStates(FiniteAutomate<? extends Transition>... automates)
+    protected static Set<State> mergeStates(FiniteAutomaton<? extends Transition>... automata)
     {
         Set<State> states = new HashSet<>();
-        for (FiniteAutomate<? extends Transition> automate : automates)
+        for (FiniteAutomaton<? extends Transition> automaton : automata)
         {
-            states.addAll(automate.getStates());
+            states.addAll(automaton.getStates());
         }
         return states;
     }
 
     @SafeVarargs
-    protected static Set<Transition> mergeTransitions(FiniteAutomate<? extends Transition>... automates)
+    protected static Set<Transition> mergeTransitions(FiniteAutomaton<? extends Transition>... automata)
     {
         Set<Transition> transitions = new HashSet<>();
-        for (FiniteAutomate<? extends Transition> automate : automates)
+        for (FiniteAutomaton<? extends Transition> automaton : automata)
         {
-            transitions.addAll(automate.getTransitions());
+            transitions.addAll(automaton.getTransitions());
         }
         return transitions;
     }

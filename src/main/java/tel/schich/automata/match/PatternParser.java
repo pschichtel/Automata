@@ -29,7 +29,7 @@ import java.util.function.Predicate;
 
 import tel.schich.automata.input.CharacterStream;
 import tel.schich.automata.DFA;
-import tel.schich.automata.FiniteAutomate;
+import tel.schich.automata.FiniteAutomaton;
 import tel.schich.automata.NFA;
 import tel.schich.automata.transition.Transition;
 import tel.schich.automata.input.source.CharSequenceSource;
@@ -55,7 +55,7 @@ public abstract class PatternParser
 
     private static NFA readExpression(CharacterStream stream, int depth)
     {
-        LinkedList<FiniteAutomate<? extends Transition>> elements = new LinkedList<>();
+        LinkedList<FiniteAutomaton<? extends Transition>> elements = new LinkedList<>();
 
         for (final char c : stream)
         {
@@ -73,7 +73,7 @@ public abstract class PatternParser
                         break;
                     }
                 case '|':
-                    NFA left = bakeAutomate(elements);
+                    NFA left = bakeAutomaton(elements);
                     NFA right = readExpression(stream, depth);
                     elements.clear();
                     elements.add(left.or(right));
@@ -98,42 +98,42 @@ public abstract class PatternParser
                     elements.addLast(readCharacter(stream, true));
             }
         }
-        return bakeAutomate(elements);
+        return bakeAutomaton(elements);
     }
 
-    static NFA bakeAutomate(LinkedList<FiniteAutomate<? extends Transition>> elements)
+    static NFA bakeAutomaton(LinkedList<FiniteAutomaton<? extends Transition>> elements)
     {
         if (elements.isEmpty())
         {
             return NFA.EMPTY;
         }
-        NFA automate = elements.getFirst().toNFA();
-        for (final FiniteAutomate<? extends Transition> element : elements.subList(1, elements.size()))
+        NFA automaton = elements.getFirst().toNFA();
+        for (final FiniteAutomaton<? extends Transition> element : elements.subList(1, elements.size()))
         {
-            automate = automate.and(element);
+            automaton = automaton.and(element);
         }
 
-        return automate;
+        return automaton;
     }
 
-    private static NFA readQuantifier(CharacterStream s, FiniteAutomate<? extends Transition> automate)
+    private static NFA readQuantifier(CharacterStream s, FiniteAutomaton<? extends Transition> automaton)
     {
         switch (s.current())
         {
             case '*':
-                return automate.kleeneStar();
+                return automaton.kleeneStar();
             case '+':
-                return automate.kleenePlus();
+                return automaton.kleenePlus();
             case '?':
-                return automate.or(NFA.EPSILON);
+                return automaton.or(NFA.EPSILON);
             case '{':
-                return readSpecificQuantifier(s, automate);
+                return readSpecificQuantifier(s, automaton);
             default:
-                return automate.toNFA();
+                return automaton.toNFA();
         }
     }
 
-    private static NFA readSpecificQuantifier(CharacterStream s, FiniteAutomate<? extends Transition> automate)
+    private static NFA readSpecificQuantifier(CharacterStream s, FiniteAutomaton<? extends Transition> automaton)
     {
         final CharBuffer.Checkpoint checkpoint = s.checkpoint();
 
@@ -145,7 +145,7 @@ public abstract class PatternParser
             if (c == '}')
             {
                 checkpoint.drop();
-                return automate.repeat(min);
+                return automaton.repeat(min);
             }
             else if (c == ',' && s.canPeekAhead())
             {
@@ -157,20 +157,20 @@ public abstract class PatternParser
                     {
                         checkpoint.drop();
                         s.advance();
-                        return automate.repeatMinMax(min, max);
+                        return automaton.repeatMinMax(min, max);
                     }
                 }
                 else if (peeked == '}')
                 {
                     checkpoint.drop();
-                    return automate.repeatMin(min);
+                    return automaton.repeatMin(min);
                 }
             }
         }
 
         checkpoint.restore();
 
-        return automate.and(readCharacter(s, true));
+        return automaton.and(readCharacter(s, true));
     }
 
     private static int readNumber(CharacterStream s, NumberSyntax syntax)
@@ -189,7 +189,7 @@ public abstract class PatternParser
 
     private static DFA readCharacterClass(CharacterStream s, int depth)
     {
-        NFA automate = NFA.EMPTY;
+        NFA automaton = NFA.EMPTY;
 
         if (!s.canPeekAhead(2))
         {
@@ -218,11 +218,11 @@ public abstract class PatternParser
             }
             if (c == '[')
             {
-                automate = automate.or(readCharacterClass(s, depth + 1));
+                automaton = automaton.or(readCharacterClass(s, depth + 1));
             }
             else
             {
-                automate = automate.or(readCharacter(s, false));
+                automaton = automaton.or(readCharacter(s, false));
             }
         }
 
@@ -234,9 +234,9 @@ public abstract class PatternParser
         checkpoint.drop();
         if (negative)
         {
-            return automate.complement();
+            return automaton.complement();
         }
-        return automate.toDFA();
+        return automaton.toDFA();
     }
 
     static DFA readCharacter(CharacterStream s, boolean allowQuote)
@@ -306,7 +306,7 @@ public abstract class PatternParser
 
     private static DFA readQuoted(CharacterStream s)
     {
-        LinkedList<FiniteAutomate<? extends Transition>> elems = new LinkedList<>();
+        LinkedList<FiniteAutomaton<? extends Transition>> elems = new LinkedList<>();
         final CharBuffer.Checkpoint checkpoint = s.checkpoint();
         for (final Character c : s)
         {
@@ -314,7 +314,7 @@ public abstract class PatternParser
             {
                 s.advance();
                 checkpoint.drop();
-                return bakeAutomate(elems).toDFA();
+                return bakeAutomaton(elems).toDFA();
             }
             elems.add(readCharacter(s, false));
         }

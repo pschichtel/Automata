@@ -41,7 +41,7 @@ import static java.util.Collections.emptySet;
 import static tel.schich.automata.util.Util.asSet;
 import static tel.schich.automata.util.Util.fixPointIterate;
 
-public class NFA extends FiniteAutomate<Transition>
+public class NFA extends FiniteAutomaton<Transition>
 {
     public static final NFA EMPTY;
     public static final NFA EPSILON;

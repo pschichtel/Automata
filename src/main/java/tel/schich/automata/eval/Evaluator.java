@@ -25,41 +25,41 @@ package tel.schich.automata.eval;
 import java.util.HashSet;
 import java.util.Set;
 import tel.schich.automata.DFA;
-import tel.schich.automata.FiniteAutomate;
+import tel.schich.automata.FiniteAutomaton;
 import tel.schich.automata.NFA;
 import tel.schich.automata.transition.Transition;
 
 public class Evaluator
 {
     @SafeVarargs
-    public static StateMachineEvaluator eval(FiniteAutomate<? extends Transition>... automates)
+    public static StateMachineEvaluator eval(FiniteAutomaton<? extends Transition>... automata)
     {
-        if (automates.length == 0)
+        if (automata.length == 0)
         {
-            throw new IllegalArgumentException("No automate given!");
+            throw new IllegalArgumentException("No automaton given!");
         }
-        if (automates.length == 1)
+        if (automata.length == 1)
         {
-            return evaluatorFor(automates[0]);
+            return evaluatorFor(automata[0]);
         }
         final Set<StateMachineEvaluator> evaluators = new HashSet<>();
-        for (final FiniteAutomate<? extends Transition> automate : automates)
+        for (final FiniteAutomaton<? extends Transition> automaton : automata)
         {
-            evaluators.add(evaluatorFor(automate));
+            evaluators.add(evaluatorFor(automaton));
         }
         return new MultiEvaluator(evaluators);
     }
 
-    private static StateMachineEvaluator evaluatorFor(FiniteAutomate<? extends Transition> automate)
+    private static StateMachineEvaluator evaluatorFor(FiniteAutomaton<? extends Transition> automaton)
     {
-        if (automate instanceof DFA)
+        if (automaton instanceof DFA)
         {
-            return new DFAEvaluator((DFA)automate);
+            return new DFAEvaluator((DFA)automaton);
         }
-        if (automate instanceof NFA)
+        if (automaton instanceof NFA)
         {
-            return new NFAEvaluator((NFA)automate);
+            return new NFAEvaluator((NFA)automaton);
         }
-        throw new IllegalArgumentException("Unknown automate type: " + automate.getClass());
+        throw new IllegalArgumentException("Unknown automaton type: " + automaton.getClass());
     }
 }
