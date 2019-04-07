@@ -10,7 +10,7 @@
 
     <groupId>tel.schich</groupId>
     <artifactId>automata</artifactId>
-    <version>0.2.0</version>
+    <version>0.2.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>Automata</name>
@@ -29,7 +29,7 @@
         <url>https://github.com/pschichtel/automata</url>
         <connection>scm:git:https://github.com/pschichtel/automata</connection>
         <developerConnection>scm:git:git@github.com:pschichtel/automata</developerConnection>
-        <tag>automata-0.2.0</tag>
+        <tag>HEAD</tag>
     </scm>
 
     <distributionManagement>
