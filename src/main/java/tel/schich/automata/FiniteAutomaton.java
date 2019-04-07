@@ -24,6 +24,7 @@ package tel.schich.automata;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
@@ -33,11 +34,13 @@ import tel.schich.automata.transition.PlannedTransition;
 import tel.schich.automata.transition.SpontaneousTransition;
 import tel.schich.automata.transition.Transition;
 import tel.schich.automata.transition.WildcardTransition;
+import tel.schich.automata.util.OrderedPair;
 import tel.schich.automata.util.UnorderedPair;
 
 import static java.util.Collections.disjoint;
 import static java.util.Collections.singleton;
 import static java.util.Collections.unmodifiableSet;
+import static tel.schich.automata.util.OrderedPair.pair;
 import static tel.schich.automata.util.UnorderedPair.unorderedPair;
 import static tel.schich.automata.util.Util.fixPointIterate;
 import static tel.schich.automata.util.Util.unmodifiableCopy;
@@ -284,7 +287,6 @@ public abstract class FiniteAutomaton<T extends Transition>
         {
             for (State q : states)
             {
-                // number of iterations can be halved by removing iterated P's from Q in P >< Q
                 if (p != q)
                 {
                     statePairs.add(unorderedPair(p, q));
@@ -292,6 +294,7 @@ public abstract class FiniteAutomaton<T extends Transition>
             }
         }
 
+        // calculate directly separable states as the initial state of the following fix-point iteration
         final Set<UnorderedPair<State, State>> separableStates = new HashSet<>();
         for (UnorderedPair<State, State> p : statePairs)
         {
@@ -302,6 +305,7 @@ public abstract class FiniteAutomaton<T extends Transition>
             }
         }
 
+        // iteratively calculate all separable states
         final Set<Character> alphabet = getExplicitAlphabet();
         boolean changed;
         do
@@ -346,6 +350,7 @@ public abstract class FiniteAutomaton<T extends Transition>
         }
         while (changed);
 
+        // drop the separable pairs in order to leave just the "useless" pairs
         statePairs.removeAll(separableStates);
 
         for (UnorderedPair<State, State> pair : statePairs)
@@ -388,6 +393,22 @@ public abstract class FiniteAutomaton<T extends Transition>
                 }
             }
         }
+
+        Set<OrderedPair<State, State>> wildcards = new HashSet<>();
+        Set<PlannedTransition> remove = new HashSet<>();
+        for (PlannedTransition transition : transitions) {
+            if (transition instanceof WildcardTransition) {
+                wildcards.add(pair(transition.getOrigin(), transition.getDestination()));
+            }
+        }
+        for (PlannedTransition t : transitions) {
+            if (!(t instanceof WildcardTransition)) {
+                if (wildcards.contains(pair(t.getOrigin(), t.getDestination()))) {
+                    remove.add(t);
+                }
+            }
+        }
+        transitions.removeAll(remove);
 
         return new DFA(states, transitions, start, accepting);
     }
