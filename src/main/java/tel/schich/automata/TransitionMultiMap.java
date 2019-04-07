@@ -51,7 +51,7 @@ final class TransitionMultiMap
         this.alphabet = unmodifiableSet(alphabet);
     }
 
-    public static TransitionMultiMap build(Set<Transition> transitions)
+    public static <T extends Transition> TransitionMultiMap build(Set<T> transitions)
     {
         Map<Character, Set<PlannedTransition>> plannedTransitions = new HashMap<>();
         Set<SpontaneousTransition> spontaneousTransitions = new HashSet<>();
