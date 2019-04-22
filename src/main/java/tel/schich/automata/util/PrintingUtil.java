@@ -40,7 +40,7 @@ public abstract class PrintingUtil
                 + "\trankdir=LR;\n");
 
         out.append("\tlabel=\"").append(name).append("\"\n");
-        out.append("\tinit [style=invis;width=0.1;height=0.1;margin=0.1];\n\n");
+        out.append("\tinit [style=invis, width=0.1, height=0.1, margin=0.1];\n\n");
 
         Set<State> accepting = a.getAcceptingStates();
         for (State s : a.getStates()) {
