@@ -32,6 +32,7 @@ import tel.schich.automata.transition.CharacterTransition;
 import tel.schich.automata.transition.PlannedTransition;
 import tel.schich.automata.transition.WildcardTransition;
 
+import static java.util.Collections.emptySet;
 import static java.util.Collections.singleton;
 import static tel.schich.automata.util.Util.asSet;
 
@@ -46,7 +47,7 @@ public abstract class Matcher
         final State start = new State();
         final State accept = new State();
         final PlannedTransition t = new WildcardTransition(start, accept);
-        return new DFA(asSet(start, accept), singleton(t), start, singleton(accept));
+        return new DFA(asSet(start, accept), asSet(t), start, asSet(accept));
     }
 
     public static DFA match(String s)
@@ -56,6 +57,11 @@ public abstract class Matcher
 
     public static DFA matchAll(char... chars)
     {
+        if (chars.length == 0) {
+            State start = new State();
+            return new DFA(asSet(start), emptySet(), start, asSet(start));
+        }
+
         Set<State> states = new HashSet<>();
         Set<PlannedTransition> transitions = new HashSet<>();
         State start = new State();

@@ -158,34 +158,34 @@ public abstract class FiniteAutomaton<T extends Transition>
 
     public NFA kleenePlus()
     {
-        final Set<State> states = new HashSet<>(getStates());
-        final Set<Transition> transitions = new HashSet<>(getTransitions());
+        final Set<State> newStates = new HashSet<>(getStates());
+        final Set<Transition> newTransitions = new HashSet<>(getTransitions());
 
-        final State start = new State();
+        final State newStart = new State();
         final State accept = new State();
-        states.add(start);
-        states.add(accept);
+        newStates.add(newStart);
+        newStates.add(accept);
 
-        transitions.add(new SpontaneousTransition(start, getStartState()));
+        newTransitions.add(new SpontaneousTransition(newStart, getStartState()));
         for (State state : getAcceptingStates())
         {
-            transitions.add(new SpontaneousTransition(state, getStartState()));
-            transitions.add(new SpontaneousTransition(state, accept));
+            newTransitions.add(new SpontaneousTransition(state, getStartState()));
+            newTransitions.add(new SpontaneousTransition(state, accept));
         }
 
-        return new NFA(states, transitions, start, singleton(accept));
+        return new NFA(newStates, newTransitions, newStart, singleton(accept));
     }
 
     public NFA kleeneStar()
     {
         final NFA base = kleenePlus();
-        final Set<Transition> transitions = new HashSet<>(base.getTransitions());
+        final Set<Transition> newTransitions = new HashSet<>(base.getTransitions());
         for (final State state : base.getAcceptingStates())
         {
-            transitions.add(new SpontaneousTransition(base.getStartState(), state));
+            newTransitions.add(new SpontaneousTransition(base.getStartState(), state));
         }
 
-        return new NFA(base.getStates(), transitions, base.getStartState(), base.getAcceptingStates());
+        return new NFA(base.getStates(), newTransitions, base.getStartState(), base.getAcceptingStates());
     }
 
     public NFA repeat(int n)

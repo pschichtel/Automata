@@ -22,15 +22,14 @@
  */
 package tel.schich.automata.util;
 
-import java.security.SignatureException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 import java.util.function.Function;
 
+import static java.util.Collections.emptySet;
+import static java.util.Collections.singleton;
 import static java.util.Collections.unmodifiableSet;
 import static tel.schich.automata.util.OrderedPair.pair;
 
@@ -38,6 +37,10 @@ public abstract class Util
 {
     private Util()
     {
+    }
+
+    public static <T> Set<T> asSet(T first) {
+        return singleton(first);
     }
 
     public static <T> Set<T> asSet(T first, T seconds) {
@@ -51,6 +54,9 @@ public abstract class Util
     @SafeVarargs
     public static <T> Set<T> asSet(T... elements)
     {
+        if (elements.length == 0) {
+            return emptySet();
+        }
         return new HashSet<>(Arrays.asList(elements));
     }
 

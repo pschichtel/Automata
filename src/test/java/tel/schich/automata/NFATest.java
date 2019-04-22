@@ -22,6 +22,8 @@
  */
 package tel.schich.automata;
 
+import tel.schich.automata.eval.DFAEvaluator;
+import tel.schich.automata.eval.Evaluator;
 import tel.schich.automata.match.Matcher;
 import tel.schich.automata.transition.CharacterTransition;
 import tel.schich.automata.transition.SpontaneousTransition;
@@ -31,7 +33,12 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Set;
+import java.util.function.Supplier;
 
+import static java.util.Arrays.asList;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static tel.schich.automata.util.TestPrinting.automatonToDot;
 import static tel.schich.automata.util.TestPrinting.printAutomoton;
 import static tel.schich.automata.util.Util.asSet;
 
@@ -114,5 +121,33 @@ public class NFATest
         DFA dfa = a.toDFA();
         printAutomoton("a as DFA", dfa);
         printAutomoton("a as minimized DFA", dfa.minimize());
+    }
+
+    @Test
+    public void testMassCombining()
+    {
+        // this is based on an example from a different example
+        DFA te = Matcher.match("te");
+        DFA s = Matcher.match("s");
+        DFA tr = Matcher.match("tr");
+        DFA empty = Matcher.match("");
+        Supplier<NFA> star = () -> Matcher.matchWildcard().kleenePlus();
+        automatonToDot("kleene star", star.get());
+
+        FiniteAutomaton<? extends Transition> alternatives = FiniteAutomaton.matchOneOf(asList(s, tr, empty, star.get()));
+        FiniteAutomaton<? extends Transition> complete = FiniteAutomaton.concatAll(asList(te, alternatives, star.get()));
+
+        automatonToDot("complete unoptimized NFA", complete);
+        DFA completeDFA = complete.toDFA();
+        automatonToDot("complete unoptimized DFA", completeDFA);
+        DFA optimized = completeDFA.minimize();
+        automatonToDot("optimized", optimized);
+
+        DFAEvaluator eval = new DFAEvaluator(optimized);
+        assertFalse(eval.transition('t'));
+        assertFalse(eval.transition('e'));
+        assertFalse(eval.transition('t'));
+        assertFalse(eval.transition('r'));
+        assertTrue(eval.transition('_'));
     }
 }
