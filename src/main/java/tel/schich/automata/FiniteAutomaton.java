@@ -22,6 +22,7 @@
  */
 package tel.schich.automata;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -42,6 +43,7 @@ import static java.util.Collections.singleton;
 import static java.util.Collections.unmodifiableSet;
 import static tel.schich.automata.util.OrderedPair.pair;
 import static tel.schich.automata.util.UnorderedPair.unorderedPair;
+import static tel.schich.automata.util.Util.asSet;
 import static tel.schich.automata.util.Util.fixPointIterate;
 import static tel.schich.automata.util.Util.unmodifiableCopy;
 
@@ -501,5 +503,59 @@ public abstract class FiniteAutomaton<T extends Transition>
             t.add(transition);
         }
         return stateTransitions;
+    }
+
+    public static FiniteAutomaton<? extends Transition> matchOneOf(
+            Collection<FiniteAutomaton<? extends Transition>> automata) {
+        if (automata.isEmpty()) {
+            return DFA.EMPTY;
+        } else if (automata.size() == 1) {
+            return automata.iterator().next();
+        } else {
+            State start = new State();
+            State end = new State();
+
+            Set<State> newStates = new HashSet<>();
+            Set<Transition> newTransitions = new HashSet<>();
+
+            for (FiniteAutomaton<? extends Transition> automaton : automata) {
+                newStates.addAll(automaton.getStates());
+                newTransitions.addAll(automaton.getTransitions());
+                newTransitions.add(new SpontaneousTransition(start, automaton.getStartState()));
+                for (State oldAccepting : automaton.getAcceptingStates()) {
+                    newTransitions.add(new SpontaneousTransition(oldAccepting, end));
+                }
+            }
+
+            return new NFA(newStates, newTransitions, start, asSet(end));
+        }
+    }
+
+    public static FiniteAutomaton<? extends Transition> concatAll(Collection<FiniteAutomaton<? extends Transition>> automata) {
+        if (automata.isEmpty()) {
+            return DFA.EMPTY;
+        } else if (automata.size() == 1) {
+            return automata.iterator().next();
+        } else {
+            Iterator<FiniteAutomaton<? extends Transition>> it = automata.iterator();
+            FiniteAutomaton<? extends Transition> first = it.next();
+            State start = first.getStartState();
+            Set<State> newStates = new HashSet<>(first.getStates());
+            Set<Transition> newTransitions = new HashSet<>(first.getTransitions());
+            Set<State> previousAccepting = first.getAcceptingStates();
+
+            while (it.hasNext()) {
+                FiniteAutomaton<? extends Transition> next = it.next();
+                newStates.addAll(next.getStates());
+                newTransitions.addAll(next.getTransitions());
+                for (State prevAccepting : previousAccepting) {
+                    newTransitions.add(new SpontaneousTransition(prevAccepting, next.getStartState()));
+                }
+                previousAccepting = next.getAcceptingStates();
+            }
+
+
+            return new NFA(newStates, newTransitions, start, previousAccepting);
+        }
     }
 }

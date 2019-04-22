@@ -25,6 +25,7 @@ package tel.schich.automata.match;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Pattern;
+
 import tel.schich.automata.DFA;
 import tel.schich.automata.State;
 import tel.schich.automata.transition.CharacterTransition;
