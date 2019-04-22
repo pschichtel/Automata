@@ -26,14 +26,13 @@ import tel.schich.automata.match.Matcher;
 import tel.schich.automata.transition.CharacterTransition;
 import tel.schich.automata.transition.SpontaneousTransition;
 import tel.schich.automata.transition.Transition;
-import tel.schich.automata.util.PrintingUtil;
 
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Set;
 
-import static tel.schich.automata.util.PrintingUtil.printAutomoton;
+import static tel.schich.automata.util.TestPrinting.printAutomoton;
 import static tel.schich.automata.util.Util.asSet;
 
 public class NFATest
@@ -85,7 +84,7 @@ public class NFATest
     @Test
     public void testClosure44()
     {
-        PrintingUtil.printAutomoton("Stroeti NFA example 4.4", stroetiExample44);
+        printAutomoton("Stroeti NFA example 4.4", stroetiExample44);
 
         for (State state : stroetiExample44.getStates())
         {
@@ -96,13 +95,13 @@ public class NFATest
     @Test
     public void testToDFA()
     {
-        PrintingUtil.printAutomoton("toDFA", stroetiExample44.toDFA());
+        printAutomoton("toDFA", stroetiExample44.toDFA());
     }
 
     @Test
     public void testToDFA2()
     {
-        PrintingUtil.printAutomoton("toDFA", stroetiExample43.toDFA());
+        printAutomoton("toDFA", stroetiExample43.toDFA());
     }
 
     @Test

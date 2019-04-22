@@ -31,7 +31,6 @@ import tel.schich.automata.transition.CharacterTransition;
 import tel.schich.automata.transition.PlannedTransition;
 import tel.schich.automata.transition.Transition;
 import tel.schich.automata.transition.WildcardTransition;
-import tel.schich.automata.util.PrintingUtil;
 
 import org.junit.Test;
 
@@ -45,6 +44,7 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static tel.schich.automata.util.Util.asSet;
+import static tel.schich.automata.util.TestPrinting.*;
 
 public class DFATest
 {
@@ -104,10 +104,10 @@ public class DFATest
 
         DFA stroeti51 = new DFA(states, transitions, q0, asSet(q3, q4));
 
-        PrintingUtil.printAutomoton("not minimized", stroeti51);
+        printAutomoton("not minimized", stroeti51);
 
         DFA minimized = stroeti51.minimize();
-        PrintingUtil.printAutomoton("minimized", minimized);
+        printAutomoton("minimized", minimized);
 
         assertThat("Start states not equal", minimized.getStartState(), is(stroeti51.getStartState()));
         assertThat("Unexpected number of states", minimized.getStates().size(), is(3));
@@ -148,9 +148,9 @@ public class DFATest
         final DFA aComplement = a.complement();
         final DFA aAgain = aComplement.complement();
 
-        PrintingUtil.printAutomoton("base a", a);
-        PrintingUtil.printAutomoton("complement a", aComplement);
-        PrintingUtil.printAutomoton("complement complement a", aAgain);
+        printAutomoton("base a", a);
+        printAutomoton("complement a", aComplement);
+        printAutomoton("complement complement a", aAgain);
 
         assertEquals("accepted char was accepted by complement",
                 a.isAccepting(a.getStartState().transition(a, acceptedChar)),
@@ -182,8 +182,8 @@ public class DFATest
         DFA a = new DFA(states, transitions, s0, states);
         DFA aMin = a.minimize();
 
-        PrintingUtil.printAutomoton("a unminimized", a);
-        PrintingUtil.printAutomoton("a minimized", aMin);
+        printAutomoton("a unminimized", a);
+        printAutomoton("a minimized", aMin);
     }
 
     @Test
@@ -204,8 +204,8 @@ public class DFATest
         DFA a = new DFA(states, transitions, s0, states);
         DFA aMin = a.minimize();
 
-        PrintingUtil.printAutomoton("a unminimized", a);
-        PrintingUtil.printAutomoton("a minimized", aMin);
+        printAutomoton("a unminimized", a);
+        printAutomoton("a minimized", aMin);
     }
 
     @Test
@@ -223,13 +223,13 @@ public class DFATest
             new CharacterTransition(B, 'b', C)
         ), A, asSet(C));
 
-        PrintingUtil.printAutomoton("a1", a1);
-        PrintingUtil.printAutomoton("a2", a2);
+        printAutomoton("a1", a1);
+        printAutomoton("a2", a2);
 
 
         final DFA union = a1.union(a2);
-        PrintingUtil.printAutomoton("a1 union a2", union);
-        PrintingUtil.automatonToDot("a1 union a2", union);
+        printAutomoton("a1 union a2", union);
+        automatonToDot("a1 union a2", union);
         assertTrue("union: a", matchAgainstString(union, "a"));
         assertTrue("union: bb", matchAgainstString(union, "bb"));
         assertFalse("union: b", matchAgainstString(union, "b"));
@@ -245,7 +245,7 @@ public class DFATest
 
 
         final DFA intersection = a1.intersectWith(a2);
-        PrintingUtil.printAutomoton("a1 intersected by a2", intersection);
+        printAutomoton("a1 intersected by a2", intersection);
         assertFalse("intersection: abb", matchAgainstString(intersection, "abb"));
         assertFalse("intersection: bba", matchAgainstString(intersection, "bba"));
         assertFalse("intersection: bab", matchAgainstString(intersection, "bab"));
@@ -261,7 +261,7 @@ public class DFATest
 
 
         final DFA difference = a1.without(a2);
-        PrintingUtil.printAutomoton("a1 without a2", difference);
+        printAutomoton("a1 without a2", difference);
         assertTrue("difference: a", matchAgainstString(difference, "a"));
         assertFalse("difference: ab", matchAgainstString(difference, "ab"));
         assertFalse("difference: ba", matchAgainstString(difference, "ba"));
@@ -291,11 +291,11 @@ public class DFATest
             new WildcardTransition(B, C)
         ), A, asSet(C));
 
-        PrintingUtil.printAutomoton("a1", a1);
-        PrintingUtil.printAutomoton("a2", a2);
+        printAutomoton("a1", a1);
+        printAutomoton("a2", a2);
 
         final DFA union = a1.union(a2);
-        PrintingUtil.printAutomoton("a1 union a2", union);
+        printAutomoton("a1 union a2", union);
         assertFalse("union: b", matchAgainstString(union, "b"));
         assertTrue("union: ba", matchAgainstString(union, "ba"));
         assertTrue("union: bb", matchAgainstString(union, "bb"));
@@ -311,7 +311,7 @@ public class DFATest
 
 
         final DFA intersection = a1.intersectWith(a2);
-        PrintingUtil.automatonToDot("a1 intersected by a2", intersection);
+        automatonToDot("a1 intersected by a2", intersection);
         assertTrue(intersection.isEmpty());
         assertFalse("intersection: b", matchAgainstString(intersection, "b"));
         assertFalse("intersection: ba", matchAgainstString(intersection, "ba"));
@@ -328,7 +328,7 @@ public class DFATest
 
 
         final DFA difference = a1.without(a2);
-        PrintingUtil.printAutomoton("a1 without a2", difference);
+        printAutomoton("a1 without a2", difference);
         assertTrue("difference: a", matchAgainstString(difference, "a"));
         assertFalse("difference: b", matchAgainstString(difference, "b"));
         assertFalse("difference: ba", matchAgainstString(difference, "ba"));
@@ -382,11 +382,11 @@ public class DFATest
         DFA first = PatternParser.toDFA("a*b*c*d*");
         DFA seconds = PatternParser.toDFA("d*c*b*a*");
 
-        PrintingUtil.automatonToDot("first", first);
-        PrintingUtil.automatonToDot("second", seconds);
+        automatonToDot("first", first);
+        automatonToDot("second", seconds);
 
         DFA intersection = first.intersectWith(seconds);
-        PrintingUtil.automatonToDot("intersection", intersection.minimize());
+        automatonToDot("intersection", intersection.minimize());
 
         assertFalse(intersection.isEmpty());
     }

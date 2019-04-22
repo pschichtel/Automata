@@ -25,7 +25,7 @@ package tel.schich.automata;
 import java.util.regex.Pattern;
 
 import tel.schich.automata.match.Matcher;
-import tel.schich.automata.util.PrintingUtil;
+import static tel.schich.automata.util.TestPrinting.printAutomoton;
 import org.junit.Test;
 
 public class MatcherTest
@@ -36,7 +36,7 @@ public class MatcherTest
     {
         DFA a = Matcher.matchAll('a');
 
-        PrintingUtil.printAutomoton("Read char", a);
+        printAutomoton("Read char", a);
     }
 
     @Test
@@ -46,7 +46,7 @@ public class MatcherTest
         DFA b = Matcher.matchAll('b');
 
         NFA c = a.concat(b);
-        PrintingUtil.printAutomoton("And", c);
+        printAutomoton("And", c);
     }
 
     @Test
@@ -56,7 +56,7 @@ public class MatcherTest
         DFA b = Matcher.matchAll('b');
 
         NFA c = a.concat(b);
-        PrintingUtil.printAutomoton("Or", c);
+        printAutomoton("Or", c);
     }
 
     @Test
@@ -65,7 +65,7 @@ public class MatcherTest
         DFA a = Matcher.matchAll('a');
 
         NFA b = a.kleeneStar();
-        PrintingUtil.printAutomoton("Kleene", b);
+        printAutomoton("Kleene", b);
     }
 
     @Test
@@ -75,9 +75,9 @@ public class MatcherTest
         System.out.println("Pattern.toString(): " + p.toString());
 
         NFA aPlus = Matcher.match(p).toNFA();
-        PrintingUtil.printAutomoton(p.toString() + " NFA", aPlus);
+        printAutomoton(p.toString() + " NFA", aPlus);
 
         DFA aPlusD = aPlus.toDFA().minimize();
-        PrintingUtil.printAutomoton(p.toString() + " DFA", aPlusD);
+        printAutomoton(p.toString() + " DFA", aPlusD);
     }
 }

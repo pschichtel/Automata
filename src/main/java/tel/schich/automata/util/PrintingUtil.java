@@ -33,17 +33,7 @@ public abstract class PrintingUtil
     private PrintingUtil()
     {}
 
-    public static void printAutomoton(String name, FiniteAutomaton<? extends Transition> a)
-    {
-        System.out.println(name + ":");
-        System.out.println("States:      " + a.getStates());
-        System.out.println("Transitions: " + a.getTransitions());
-        System.out.println("Accepting:   " + a.getAcceptingStates());
-        System.out.println("Start:       " + a.getStartState());
-        System.out.println();
-    }
-
-    public static void automatonToDot(String name, FiniteAutomaton<? extends Transition> a)
+    public static String automatonToDot(String name, FiniteAutomaton<? extends Transition> a)
     {
         StringBuilder out = new StringBuilder(
                 "digraph {\n"
@@ -75,6 +65,6 @@ public abstract class PrintingUtil
 
         out.append("}\n");
 
-        System.out.println(out);
+        return out.toString();
     }
 }
