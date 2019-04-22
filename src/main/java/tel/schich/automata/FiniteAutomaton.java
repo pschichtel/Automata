@@ -505,8 +505,7 @@ public abstract class FiniteAutomaton<T extends Transition>
         return stateTransitions;
     }
 
-    public static FiniteAutomaton<? extends Transition> matchOneOf(
-            Collection<FiniteAutomaton<? extends Transition>> automata) {
+    public static FiniteAutomaton<? extends Transition> matchOneOf(Collection<FiniteAutomaton<? extends Transition>> automata) {
         if (automata.isEmpty()) {
             return DFA.EMPTY;
         } else if (automata.size() == 1) {
