@@ -104,7 +104,6 @@
                 <configuration>
                     <source>${javaVersion}</source>
                     <target>${javaVersion}</target>
-                    <optimize>true</optimize>
                     <showWarnings>true</showWarnings>
                     <showDeprecation>true</showDeprecation>
                     <compilerArgument>-parameters</compilerArgument>
@@ -116,17 +115,21 @@
                 <version>4.6</version>
                 <configuration>
                     <strictCheck>true</strictCheck>
-                    <header>com/mycila/maven/plugin/license/templates/MIT.txt</header>
-                    <includes>
-                        <include>src/**/*.java</include>
-                    </includes>
-                    <excludes>
-                        <exclude>${project.build.outputDirectory}</exclude>
-                    </excludes>
                     <properties>
                         <owner>Phillip Schichtel</owner>
                         <email>phillip@schich.tel</email>
                     </properties>
+                    <licenseSets>
+                        <licenseSet>
+                            <header>com/mycila/maven/plugin/license/templates/MIT.txt</header>
+                            <includes>
+                                <include>src/**/*.java</include>
+                            </includes>
+                            <excludes>
+                                <exclude>${project.build.outputDirectory}</exclude>
+                            </excludes>
+                        </licenseSet>
+                    </licenseSets>
                     <mapping>
                         <java>SLASHSTAR_STYLE</java>
                     </mapping>
